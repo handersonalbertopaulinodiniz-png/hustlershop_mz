@@ -153,9 +153,21 @@ export const signIn = async (email, password) => {
         }
 
         showToast(`Welcome back, ${currentProfile.full_name}!`, 'success');
+
+        // Final State Check
+        const finalUserData = {
+            id: currentUser.id,
+            email: currentUser.email,
+            role: currentProfile.role,
+            full_name: currentProfile.full_name
+        };
+
+        localStorage.setItem('user', JSON.stringify(finalUserData));
+        localStorage.setItem('userProfile', JSON.stringify(currentProfile));
+
         handleAuthRedirect();
 
-        return { success: true, user: data.user };
+        return { success: true, user: finalUserData };
     } catch (error) {
         console.error('Sign in error:', error);
         showToast(error.message || 'Failed to sign in', 'error');

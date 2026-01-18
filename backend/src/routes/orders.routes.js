@@ -7,13 +7,13 @@ const admin = require('../middleware/admin');
 // POST /orders (Cliente)
 router.post('/', auth, async (req, res) => {
     const { total_amount, shipping_address, payment_method, items } = req.body;
-    const customer_id = req.user.id;
+    const user_id = req.user.id;
 
     try {
         // 1. Create the order
         const { data: order, error: orderError } = await supabase
             .from('orders')
-            .insert([{ customer_id, total_amount, shipping_address, payment_method }])
+            .insert([{ user_id, total_amount, shipping_address, payment_method }])
             .select()
             .single();
 
@@ -44,10 +44,10 @@ router.get('/', auth, async (req, res) => {
     const { role, id } = req.user;
 
     try {
-        let query = supabase.from('orders').select('*, profiles!orders_customer_id_fkey(full_name), order_items(*)');
+        let query = supabase.from('orders').select('*, profiles!orders_user_id_fkey(full_name), order_items(*)');
 
         if (role === 'customer') {
-            query = query.eq('customer_id', id);
+            query = query.eq('user_id', id);
         } else if (role === 'delivery') {
             query = query.eq('delivery_id', id);
         }

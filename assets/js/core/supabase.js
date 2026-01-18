@@ -3,20 +3,31 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 // Supabase Configuration
 const SUPABASE_URL = 'https://jxekugcmqqugoafujdap.supabase.co';
-const SUPABASE_ANON_KEY = 'jxekugcmqqugoafujdap';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZWt1Z2NtcXF1Z29hZnVqZGFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2OTMyNzgsImV4cCI6MjA4NDI2OTI3OH0.w-9QihFRDkUbaCJNKOgbOi-WEdMYUai_Ft1FzA5n-2Q';
 
-// Create Supabase client
+// Create Supabase client with debug logging
+console.log('Initializing Supabase for project:', SUPABASE_URL);
+
+if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.length < 50) {
+  console.error('CRITICAL: Supabase Anon Key appears to be invalid or too short!');
+}
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Attach to window for easy debugging in the browser console
+window.__SUPABASE_QUERY__ = async (table) => {
+  const { data, error } = await supabase.from(table).select('*').limit(1);
+  return { data, error };
+};
 
 // Database Tables
 export const TABLES = {
-  USERS: 'users',
+  USERS: 'profiles', // Per the SQL schema, user metadata is in 'profiles'
   PRODUCTS: 'products',
   ORDERS: 'orders',
   ORDER_ITEMS: 'order_items',
   CART: 'cart',
   WISHLIST: 'wishlist',
-  DELIVERIES: 'deliveries',
   REVIEWS: 'reviews',
   CATEGORIES: 'categories',
   NOTIFICATIONS: 'notifications'
@@ -98,8 +109,8 @@ export const deleteFile = async (bucket, path) => {
 export const subscribeToTable = (table, callback) => {
   return supabase
     .channel(`public:${table}`)
-    .on('postgres_changes', 
-      { event: '*', schema: 'public', table }, 
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table },
       callback
     )
     .subscribe();
@@ -112,11 +123,11 @@ export const unsubscribe = (subscription) => {
 // Error Handler
 export const handleSupabaseError = (error) => {
   console.error('Supabase Error:', error);
-  
+
   if (error.message) {
     return error.message;
   }
-  
+
   return 'An unexpected error occurred';
 };
 
@@ -125,12 +136,12 @@ export const initSupabase = async () => {
   try {
     // Test connection
     const { data, error } = await supabase.from(TABLES.USERS).select('count').limit(1);
-    
+
     if (error) {
       console.error('Failed to connect to Supabase:', error);
       return false;
     }
-    
+
     console.log('✅ Supabase connected successfully');
     return true;
   } catch (error) {
