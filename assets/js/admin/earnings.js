@@ -36,19 +36,19 @@ async function loadEarnings() {
         if (!tableBody) return;
 
         if (!orders || orders.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-zinc-500">No recent transactions</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-zinc-500">Sem transações recentes</td></tr>';
             return;
         }
 
         tableBody.innerHTML = orders.map(order => `
             <tr class="border-b border-zinc-800 hover:bg-tertiary transition-all">
                 <td class="p-4 text-xs font-bold text-primary">#${order.id.slice(0, 8)}</td>
-                <td class="p-4 text-sm text-primary">${order.profiles?.full_name || 'Customer'}</td>
+                <td class="p-4 text-sm text-primary">${order.profiles?.full_name || 'Cliente'}</td>
                 <td class="p-4 font-bold text-primary">${formatCurrency(order.total_amount)}</td>
                 <td class="p-4 uppercase text-xs tracking-wider text-tertiary">${order.payment_method || 'M-Pesa'}</td>
                 <td class="p-4">
                     <span class="status-badge ${getPaymentStatusClass(order.payment_status)}">
-                        ${order.payment_status || 'pending'}
+                        ${translatePaymentStatus(order.payment_status)}
                     </span>
                 </td>
                 <td class="p-4 text-tertiary text-xs tracking-wider uppercase">${formatDate(order.created_at)}</td>
@@ -58,6 +58,16 @@ async function loadEarnings() {
     } catch (error) {
         console.error('Error loading earnings:', error);
     }
+}
+
+function translatePaymentStatus(status) {
+    const statuses = {
+        'completed': 'CONCLUÍDO',
+        'pending': 'PENDENTE',
+        'failed': 'FALHOU',
+        'refunded': 'REEMBOLSADO'
+    };
+    return statuses[status] || (status ? status.toUpperCase() : 'PENDENTE');
 }
 
 function getPaymentStatusClass(status) {

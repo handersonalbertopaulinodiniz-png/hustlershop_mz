@@ -22,6 +22,8 @@ CREATE TABLE public.profiles (
   approval_status TEXT DEFAULT 'pending' CHECK (approval_status IN ('pending', 'approved', 'rejected')),
   phone TEXT,
   address TEXT,
+  bi_number TEXT, -- Identity document (BI)
+  transport_type TEXT CHECK (transport_type IN ('mota', 'carro', 'bicicleta', 'a_pe')), -- Transport method
   bio TEXT,
   avatar_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -140,7 +142,7 @@ CREATE POLICY "Users can manage their own cart." ON public.cart FOR ALL USING (u
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, full_name, email, role, approval_status)
+  INSERT INTO public.profiles (id, full_name, email, role, approval_status, bi_number, transport_type)
   VALUES (
     new.id, 
     new.raw_user_meta_data->>'full_name', 
@@ -151,8 +153,11 @@ BEGIN
     END,
     CASE 
       WHEN new.email = 'handersonalbertopaulinodiniz@gmail.com' THEN 'approved'
-      ELSE 'approved' -- Customers are approved by default, Delivery/others can be changed manually
-    END
+      WHEN COALESCE(new.raw_user_meta_data->>'role', 'customer') = 'customer' THEN 'approved'
+      ELSE 'pending' -- Delivery must be approved by admin
+    END,
+    new.raw_user_meta_data->>'bi_number',
+    new.raw_user_meta_data->>'transport_type'
   );
   RETURN new;
 END;

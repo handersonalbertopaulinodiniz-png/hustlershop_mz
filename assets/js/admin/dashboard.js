@@ -53,14 +53,14 @@ async function loadRecentActivity() {
     if (!recentOrders || recentOrders.length === 0) {
         activityContainer.innerHTML = `
             <div class="empty-state">
-                <p class="text-secondary text-sm">No recent transactions</p>
+                <p class="text-secondary text-sm">Sem transações recentes</p>
             </div>
         `;
         return;
     }
 
     const activityHTML = recentOrders.map(order => {
-        const customerName = order.profiles?.full_name || 'Anonymous Customer';
+        const customerName = order.profiles?.full_name || 'Utilizador Anónimo';
         const initials = customerName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
         return `
@@ -69,18 +69,30 @@ async function loadRecentActivity() {
                     <div class="avatar">${initials}</div>
                     <div class="item-info">
                         <span class="item-name">${customerName}</span>
-                        <span class="item-email">Order #${order.id.slice(0, 8)} • ${formatDate(order.created_at)}</span>
+                        <span class="item-email">Encomenda #${order.id.slice(0, 8)} • ${formatDate(order.created_at)}</span>
                     </div>
                 </div>
                 <div class="item-right">
                     <span class="item-amount">+${formatCurrency(order.total_amount)}</span>
-                    <span class="status-badge ${getStatusBadgeClass(order.status)}">${order.status.toUpperCase()}</span>
+                    <span class="status-badge ${getStatusBadgeClass(order.status)}">${translateStatus(order.status)}</span>
                 </div>
             </div>
         `;
     }).join('');
 
     activityContainer.innerHTML = activityHTML;
+}
+
+function translateStatus(status) {
+    const statuses = {
+        'pending': 'PENDENTE',
+        'processing': 'PROCESSANDO',
+        'shipped': 'ENVIADO',
+        'delivered': 'ENTREGUE',
+        'cancelled': 'CANCELADO',
+        'completed': 'CONCLUÍDO'
+    };
+    return statuses[status] || status.toUpperCase();
 }
 
 function getStatusBadgeClass(status) {
@@ -95,7 +107,7 @@ function getStatusBadgeClass(status) {
             return 'success';
         case 'cancelled':
         case 'failed':
-            return 'danger'; // Assuming danger exists or fallback
+            return 'danger';
         default:
             return 'success';
     }

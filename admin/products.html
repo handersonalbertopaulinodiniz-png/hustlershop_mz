@@ -28,40 +28,40 @@
                 <div class="sidebar-nav">
                     <a href="dashboard.html" class="nav-item">
                         <i data-lucide="layout-dashboard"></i>
-                        <span>Dashboard</span>
+                        <span>Painel Principal</span>
                     </a>
                     <a href="products.html" class="nav-item active">
                         <i data-lucide="package"></i>
-                        <span>Inventory</span>
+                        <span>Inventário</span>
                     </a>
                     <a href="users.html" class="nav-item">
                         <i data-lucide="users"></i>
-                        <span>Users</span>
+                        <span>Utilizadores</span>
                     </a>
                     <a href="orders.html" class="nav-item">
                         <i data-lucide="shopping-cart"></i>
-                        <span>Orders</span>
+                        <span>Encomendas</span>
                     </a>
                     <a href="approvals.html" class="nav-item">
                         <i data-lucide="check-circle-2"></i>
-                        <span>Approvals</span>
-                        <span class="badge">12</span>
+                        <span>Aprovações</span>
+                        <span id="approvals-badge" class="badge">0</span>
                     </a>
                     <a href="earnings.html" class="nav-item">
                         <i data-lucide="wallet"></i>
-                        <span>Earnings</span>
+                        <span>Ganhos</span>
                     </a>
                 </div>
 
                 <div class="sidebar-footer-nav">
                     <a href="settings.html" class="nav-item">
                         <i data-lucide="settings"></i>
-                        <span>Settings</span>
+                        <span>Definições</span>
                     </a>
                     <button id="logoutBtn" type="button"
                         class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
                         <i data-lucide="log-out"></i>
-                        <span>Logout</span>
+                        <span>Sair</span>
                     </button>
                 </div>
             </nav>
@@ -69,11 +69,12 @@
             <div class="sidebar-footer">
                 <div class="user-profile-mini">
                     <div class="user-avatar">
-                        <img src="https://ui-avatars.com/api/?name=Admin&background=000&color=fff" alt="Admin">
+                        <img src="https://ui-avatars.com/api/?name=Handerson+Diniz&background=000&color=fff"
+                            alt="Admin">
                     </div>
                     <div class="user-info">
-                        <span class="user-name">Alex Rivera</span>
-                        <span class="user-role">Super Admin</span>
+                        <span class="user-name">Handerson Diniz</span>
+                        <span class="user-role">Administrador Master</span>
                     </div>
                 </div>
             </div>
@@ -84,6 +85,9 @@
             <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
+                    <button type="button" class="sidebar-toggle" aria-label="Toggle menu">
+                        <i data-lucide="menu"></i>
+                    </button>
                     <h2 class="text-xl font-bold m-0 uppercase tracking-tight">Inventory</h2>
                 </div>
 
@@ -117,13 +121,16 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr>
-                                    <th scope="col">Product</th>
-                                    <th scope="col">Category</th>
-                                    <th scope="col">Price</th>
-                                    <th scope="col">Stock</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col" class="text-right">Actions</th>
+                                <tr class="text-left border-b border-zinc-800">
+                                    <th class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary">Produto
+                                    </th>
+                                    <th class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary">Categoria
+                                    </th>
+                                    <th class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary">Preço</th>
+                                    <th class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary">Stock</th>
+                                    <th class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary">Estado</th>
+                                    <th class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary text-right">
+                                        Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="productsTableBody">
@@ -142,24 +149,24 @@
     <!-- Product Modal -->
     <div id="productModal" class="modal-overlay">
         <div class="modal-content modal-content-premium">
-            <h3 class="text-xl font-bold mb-4" id="modalTitle">Add Product</h3>
+            <h3 class="text-xl font-bold mb-4" id="modalTitle">Adicionar Produto</h3>
             <form id="productForm">
                 <input type="hidden" id="productId">
 
                 <div class="form-group">
-                    <label class="label form-label-premium">Product Name</label>
+                    <label class="label form-label-premium">Nome do Produto</label>
                     <input type="text" id="productName" class="input w-full form-input-premium" required>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="form-group">
-                        <label class="label form-label-premium">Category</label>
+                        <label class="label form-label-premium">Categoria</label>
                         <select id="productCategory" class="select w-full form-input-premium" required>
-                            <option value="">Select Category</option>
+                            <option value="">Selecionar Categoria</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="label form-label-premium">Price (MZN)</label>
+                        <label class="label form-label-premium">Preço (MZN)</label>
                         <input type="number" id="productPrice" class="input w-full form-input-premium" min="0"
                             step="0.01" required>
                     </div>
@@ -167,25 +174,25 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="form-group">
-                        <label class="label form-label-premium">Stock Quantity</label>
+                        <label class="label form-label-premium">Quantidade em Stock</label>
                         <input type="number" id="productStock" class="input w-full form-input-premium" min="0" required>
                     </div>
                     <div class="form-group">
-                        <label class="label form-label-premium">Image URL</label>
+                        <label class="label form-label-premium">URL da Imagem</label>
                         <input type="url" id="productImage" class="input w-full form-input-premium"
                             placeholder="https://">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="label form-label-premium">Description</label>
+                    <label class="label form-label-premium">Descrição</label>
                     <textarea id="productDescription" class="textarea w-full form-input-premium" rows="3"></textarea>
                 </div>
 
                 <div class="flex justify-end gap-3 mt-4">
-                    <button type="button" class="btn btn-ghost text-zinc-400" id="cancelModalBtn">Cancel</button>
-                    <button type="submit" class="btn-primary-premium p-3 px-6 rounded-lg">Save
-                        Product</button>
+                    <button type="button" class="btn btn-ghost text-zinc-400" id="cancelModalBtn">Cancelar</button>
+                    <button type="submit" class="btn-primary-premium p-3 px-6 rounded-lg font-bold">Guardar
+                        Produto</button>
                 </div>
             </form>
         </div>

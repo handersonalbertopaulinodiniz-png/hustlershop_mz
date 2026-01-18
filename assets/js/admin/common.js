@@ -1,5 +1,6 @@
 import { initAuth, requireRole, signOut } from '../core/auth.js';
 import { initTopbar } from '../components/topbar.js';
+import { usersAPI } from '../core/api.js';
 
 export const initAdminPage = async () => {
     // Strict Admin Check
@@ -12,6 +13,12 @@ export const initAdminPage = async () => {
     // Initialize Topbar
     initTopbar();
 
+    // Update Profile Info
+    updateAdminProfile();
+
+    // Update Badge
+    updateApprovalsBadge();
+
     // Setup Logout
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
@@ -21,10 +28,16 @@ export const initAdminPage = async () => {
     }
 
     // Mobile Sidebar Toggle
-    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarToggle = document.querySelector('.sidebar-toggle');
     const sidebar = document.querySelector('.sidebar');
-    const overlay = document.createElement('div');
-    overlay.className = 'sidebar-overlay';
+
+    // Create overlay if not present
+    let overlay = document.querySelector('.sidebar-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+    }
 
     // Add overlay styles dynamically if not present
     if (!document.getElementById('sidebar-overlay-style')) {
@@ -37,35 +50,46 @@ export const initAdminPage = async () => {
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 40;
+                background: rgba(0,0,0,0.7);
+                backdrop-filter: blur(4px);
+                z-index: 900;
                 opacity: 0;
                 visibility: hidden;
-                transition: all 0.3s;
+                transition: all 0.3s ease;
             }
             .sidebar-overlay.active {
                 opacity: 1;
                 visibility: visible;
             }
-            @media (max-width: 1024px) {
-                .sidebar.active {
-                    transform: translateX(0);
-                }
-            }
         `;
         document.head.appendChild(style);
-        document.body.appendChild(overlay);
     }
 
+    const toggleSidebar = () => {
+        const isActive = sidebar.classList.toggle('active');
+        overlay.classList.toggle('active', isActive);
+        document.body.style.overflow = isActive ? 'hidden' : '';
+    };
+
+    const closeSidebar = () => {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
     if (sidebarToggle && sidebar) {
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
+        sidebarToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSidebar();
         });
 
-        overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
+        overlay.addEventListener('click', closeSidebar);
+
+        // Close sidebar on window resize if screen becomes large
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 1024) {
+                closeSidebar();
+            }
         });
     }
 };
@@ -78,9 +102,40 @@ export const formatCurrency = (amount) => {
 };
 
 export const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-GB', {
+    return new Date(dateString).toLocaleDateString('pt-MZ', {
         day: 'numeric',
         month: 'short',
         year: 'numeric'
     });
 };
+
+async function updateAdminProfile() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return;
+
+    const nameEl = document.querySelector('.user-name');
+    const avatarImg = document.querySelector('.user-avatar img');
+
+    if (nameEl) nameEl.textContent = user.full_name || 'Administrador';
+    if (avatarImg) {
+        avatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || 'Admin')}&background=000&color=fff`;
+    }
+}
+
+async function updateApprovalsBadge() {
+    try {
+        const { count, error } = await usersAPI.count({
+            filters: { approval_status: 'pending' }
+        });
+
+        if (error) throw error;
+
+        const badge = document.getElementById('approvals-badge');
+        if (badge) {
+            badge.textContent = count || 0;
+            badge.classList.toggle('hidden', count === 0);
+        }
+    } catch (error) {
+        console.error('Error updating badge:', error);
+    }
+}

@@ -28,40 +28,40 @@
                 <div class="sidebar-nav">
                     <a href="dashboard.html" class="nav-item">
                         <i data-lucide="layout-dashboard"></i>
-                        <span>Dashboard</span>
+                        <span>Painel Principal</span>
                     </a>
                     <a href="products.html" class="nav-item">
                         <i data-lucide="package"></i>
-                        <span>Inventory</span>
+                        <span>Inventário</span>
                     </a>
                     <a href="users.html" class="nav-item">
                         <i data-lucide="users"></i>
-                        <span>Users</span>
+                        <span>Utilizadores</span>
                     </a>
                     <a href="orders.html" class="nav-item">
                         <i data-lucide="shopping-cart"></i>
-                        <span>Orders</span>
+                        <span>Encomendas</span>
                     </a>
                     <a href="approvals.html" class="nav-item active">
                         <i data-lucide="check-circle-2"></i>
-                        <span>Approvals</span>
-                        <span class="badge">12</span>
+                        <span>Aprovações</span>
+                        <span id="approvals-badge" class="badge">0</span>
                     </a>
                     <a href="earnings.html" class="nav-item">
                         <i data-lucide="wallet"></i>
-                        <span>Earnings</span>
+                        <span>Ganhos</span>
                     </a>
                 </div>
 
                 <div class="sidebar-footer-nav">
                     <a href="settings.html" class="nav-item">
                         <i data-lucide="settings"></i>
-                        <span>Settings</span>
+                        <span>Definições</span>
                     </a>
                     <button id="logoutBtn" type="button"
                         class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
                         <i data-lucide="log-out"></i>
-                        <span>Logout</span>
+                        <span>Sair</span>
                     </button>
                 </div>
             </nav>
@@ -69,11 +69,12 @@
             <div class="sidebar-footer">
                 <div class="user-profile-mini">
                     <div class="user-avatar">
-                        <img src="https://ui-avatars.com/api/?name=Admin&background=000&color=fff" alt="Admin">
+                        <img src="https://ui-avatars.com/api/?name=Handerson+Diniz&background=000&color=fff"
+                            alt="Admin">
                     </div>
                     <div class="user-info">
-                        <span class="user-name">Alex Rivera</span>
-                        <span class="user-role">Super Admin</span>
+                        <span class="user-name">Handerson Diniz</span>
+                        <span class="user-role">Administrador Master</span>
                     </div>
                 </div>
             </div>
@@ -83,7 +84,10 @@
         <main class="main-content">
             <header class="topbar">
                 <div class="topbar-left">
-                    <h2 class="text-xl font-bold m-0 uppercase tracking-tight">Approvals</h2>
+                    <button type="button" class="sidebar-toggle" aria-label="Toggle menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h2 class="text-xl font-bold m-0 uppercase tracking-tight">Aprovações</h2>
                 </div>
                 <div class="topbar-right">
                     <button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle theme">
@@ -96,20 +100,29 @@
                 <div class="content-card">
                     <div class="card-header border-none">
                         <div class="header-title">
-                            <h3>Pending Approvals</h3>
-                            <p>Verify and approve new delivery partners and sellers</p>
+                            <h3>Aprovações Pendentes</h3>
+                            <p>Verifique e aprove novos estafetas e parceiros</p>
                         </div>
                     </div>
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr>
-                                    <th scope="col">User</th>
-                                    <th scope="col">Request Type</th>
-                                    <th scope="col">Document</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col" class="text-right">Actions</th>
+                                <tr class="text-left border-b border-zinc-800">
+                                    <th scope="col"
+                                        class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary">Utilizador
+                                    </th>
+                                    <th scope="col"
+                                        class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary">Tipo de
+                                        Pedido</th>
+                                    <th scope="col"
+                                        class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary">
+                                        Documento/Transporte</th>
+                                    <th scope="col"
+                                        class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary">Data</th>
+                                    <th scope="col"
+                                        class="p-4 text-xs font-bold uppercase tracking-wider text-tertiary text-right">
+                                        Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="approvalsTableBody">

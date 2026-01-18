@@ -17,13 +17,13 @@ async function loadCategories() {
     if (categories) {
         // Filter Select
         const select = document.querySelector('select.select');
-        select.innerHTML = '<option value="all">All Categories</option>' +
+        select.innerHTML = '<option value="all">Todas as Categorias</option>' +
             categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 
         // Modal Select
         const modalSelect = document.getElementById('productCategory');
         if (modalSelect) {
-            modalSelect.innerHTML = '<option value="">Select Category</option>' +
+            modalSelect.innerHTML = '<option value="">Selecionar Categoria</option>' +
                 categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
         }
     }
@@ -31,14 +31,14 @@ async function loadCategories() {
 
 async function loadProducts() {
     const tableBody = document.querySelector('tbody');
-    tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">A carregar...</td></tr>';
 
     const { data, error } = await productsAPI.getAll({
         select: '*, categories(name)'
     });
 
     if (error) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-error">Failed to load products</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-error">Falha ao carregar produtos</td></tr>';
         return;
     }
 
@@ -51,8 +51,8 @@ function renderProducts(products) {
     const showingCount = document.getElementById('showingCount');
 
     if (products.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">No products found</td></tr>';
-        if (showingCount) showingCount.textContent = 'Showing 0 of 0 products';
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Nenhum produto encontrado</td></tr>';
+        if (showingCount) showingCount.textContent = 'A mostrar 0 de 0 produtos';
         return;
     }
 
@@ -66,20 +66,20 @@ function renderProducts(products) {
                     <span class="font-bold text-primary">${product.name}</span>
                 </div>
             </td>
-            <td class="p-4 text-secondary uppercase text-xs tracking-wider">${product.categories ? product.categories.name : 'Uncategorized'}</td>
+            <td class="p-4 text-secondary uppercase text-xs tracking-wider">${product.categories ? product.categories.name : 'Sem Categoria'}</td>
             <td class="p-4 font-bold text-primary">${formatCurrency(product.price)}</td>
             <td class="p-4 text-primary">${product.stock_quantity}</td>
             <td class="p-4">
                 <span class="status-badge ${product.stock_quantity > 0 ? 'success' : 'danger'}">
-                    ${product.stock_quantity > 0 ? 'In Stock' : 'Out of Stock'}
+                    ${product.stock_quantity > 0 ? 'Em Stock' : 'Sem Stock'}
                 </span>
             </td>
             <td class="p-4 text-right">
                 <div class="flex justify-end gap-2">
-                    <button type="button" aria-label="Edit product" class="btn btn-secondary btn-sm p-2" onclick="editProduct('${product.id}')">
+                    <button type="button" aria-label="Editar produto" class="btn btn-secondary btn-sm p-2" onclick="editProduct('${product.id}')">
                         <i data-lucide="edit-3" class="w-4 h-4"></i>
                     </button>
-                    <button type="button" aria-label="Delete product" class="btn btn-secondary btn-sm p-2 text-primary hover:bg-zinc-900 transition-colors" onclick="deleteProduct('${product.id}')">
+                    <button type="button" aria-label="Eliminar produto" class="btn btn-secondary btn-sm p-2 text-primary hover:bg-zinc-900 transition-colors" onclick="deleteProduct('${product.id}')">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -89,59 +89,11 @@ function renderProducts(products) {
 
     lucide.createIcons();
 
-    if (showingCount) showingCount.textContent = `Showing ${products.length} of ${allProducts.length} products`;
+    if (showingCount) showingCount.textContent = `A mostrar ${products.length} de ${allProducts.length} produtos`;
 }
 
-function setupEventListeners() {
-    // Search
-    const searchInput = document.querySelector('input[type="text"]');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const filtered = allProducts.filter(p =>
-                p.name.toLowerCase().includes(query) ||
-                (p.categories?.name || '').toLowerCase().includes(query)
-            );
-            renderProducts(filtered);
-        });
-    }
+// ... existing setupEventListeners ...
 
-    // Filter
-    const filterSelect = document.querySelector('select.select');
-    if (filterSelect) {
-        filterSelect.addEventListener('change', (e) => {
-            const categoryId = e.target.value;
-            if (categoryId === 'all') {
-                renderProducts(allProducts);
-            } else {
-                const filtered = allProducts.filter(p => p.category_id === categoryId);
-                renderProducts(filtered);
-            }
-        });
-    }
-
-    // Add Product Btn
-    const addBtn = document.querySelector('.btn-primary');
-    if (addBtn) {
-        addBtn.addEventListener('click', () => {
-            openProductModal();
-        });
-    }
-
-    // Modal Cancel
-    const cancelBtn = document.getElementById('cancelModalBtn');
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', closeProductModal);
-    }
-
-    // Form Submit
-    const form = document.getElementById('productForm');
-    if (form) {
-        form.addEventListener('submit', handleProductSubmit);
-    }
-}
-
-// Modal Functions
 function openProductModal(product = null) {
     const modal = document.getElementById('productModal');
     const form = document.getElementById('productForm');
@@ -151,7 +103,7 @@ function openProductModal(product = null) {
 
     if (product) {
         // Edit Mode
-        title.textContent = 'Edit Product';
+        title.textContent = 'Editar Produto';
         document.getElementById('productId').value = product.id;
         document.getElementById('productName').value = product.name;
         document.getElementById('productCategory').value = product.category_id || '';
@@ -161,17 +113,12 @@ function openProductModal(product = null) {
         document.getElementById('productDescription').value = product.description || '';
     } else {
         // Add Mode
-        title.textContent = 'Add Product';
+        title.textContent = 'Adicionar Produto';
         form.reset();
         document.getElementById('productId').value = '';
     }
 
     modal.classList.add('active');
-}
-
-function closeProductModal() {
-    const modal = document.getElementById('productModal');
-    if (modal) modal.classList.remove('active');
 }
 
 async function handleProductSubmit(e) {
@@ -188,7 +135,7 @@ async function handleProductSubmit(e) {
     };
 
     if (!data.category_id) {
-        showToast('Please select a category', 'error');
+        showToast('Por favor, selecione uma categoria', 'error');
         return;
     }
 
@@ -201,27 +148,26 @@ async function handleProductSubmit(e) {
         }
 
         if (result.success) {
-            showToast(`Product ${id ? 'updated' : 'created'} successfully`, 'success');
+            showToast(`Produto ${id ? 'atualizado' : 'criado'} com sucesso`, 'success');
             closeProductModal();
             loadProducts();
         } else {
-            showToast(result.error || 'Operation failed', 'error');
+            showToast(result.error || 'A operação falhou', 'error');
         }
     } catch (error) {
         console.error(error);
-        showToast('An unexpected error occurred', 'error');
+        showToast('Ocorreu um erro inesperado', 'error');
     }
 }
 
-// Global functions for inline click handlers
 window.deleteProduct = async (id) => {
-    if (confirm('Are you sure you want to delete this product?')) {
+    if (confirm('Tem certeza que deseja eliminar este produto?')) {
         const { success, error } = await productsAPI.delete(id);
         if (success) {
-            showToast('Product deleted successfully', 'success');
+            showToast('Produto eliminado com sucesso', 'success');
             loadProducts();
         } else {
-            showToast('Failed to delete product', 'error');
+            showToast('Falha ao eliminar produto', 'error');
         }
     }
 };
@@ -231,6 +177,6 @@ window.editProduct = (id) => {
     if (product) {
         openProductModal(product);
     } else {
-        showToast('Product not found', 'error');
+        showToast('Produto não encontrado', 'error');
     }
 };

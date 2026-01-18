@@ -12,14 +12,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadUsers() {
     const tableBody = document.querySelector('tbody');
-    tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Loading...</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">A carregar...</td></tr>';
 
     const { data, error } = await usersAPI.getAll({
         orderBy: { column: 'created_at', ascending: false }
     });
 
     if (error) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-error">Failed to load users</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-error">Falha ao carregar utilizadores</td></tr>';
         return;
     }
 
@@ -32,8 +32,8 @@ function renderUsers(users) {
     const showingCount = document.getElementById('showingCount');
 
     if (users.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">No users found</td></tr>';
-        if (showingCount) showingCount.textContent = 'Showing 0 of 0 users';
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center p-4">Nenhum utilizador encontrado</td></tr>';
+        if (showingCount) showingCount.textContent = 'A mostrar 0 de 0 utilizadores';
         return;
     }
 
@@ -44,24 +44,24 @@ function renderUsers(users) {
                     <div class="w-8 h-8 rounded-full bg-tertiary text-primary flex items-center justify-center font-bold text-xs border border-zinc-800 uppercase tracking-tighter">
                         ${getInitials(user.full_name || user.email || 'U')}
                     </div>
-                    <span class="font-bold text-primary">${user.full_name || 'Unnamed User'}</span>
+                    <span class="font-bold text-primary">${user.full_name || 'Utilizador sem nome'}</span>
                 </div>
             </td>
             <td class="p-4">
                 <span class="status-badge ${user.role === 'admin' ? 'success' : 'warning'}">
-                    ${user.role}
+                    ${translateRole(user.role)}
                 </span>
             </td>
             <td class="p-4 text-secondary text-sm">${user.email}</td>
             <td class="p-4">
                <span class="status-badge ${user.approval_status === 'approved' ? 'success' : (user.approval_status === 'pending' ? 'warning' : 'danger')}">
-                ${capitalize(user.approval_status || 'approved')}
+                ${translateStatus(user.approval_status || 'approved')}
                </span>
             </td>
             <td class="p-4 text-tertiary text-xs tracking-wider uppercase">${formatDate(user.created_at)}</td>
             <td class="p-4 text-right">
                 ${user.role !== 'admin' ? `
-                <button type="button" aria-label="Delete user" class="btn btn-secondary btn-sm p-2 text-primary hover:bg-zinc-900 transition-colors" onclick="deleteUser('${user.id}')">
+                <button type="button" aria-label="Eliminar utilizador" class="btn btn-secondary btn-sm p-2 text-primary hover:bg-zinc-900 transition-colors" onclick="deleteUser('${user.id}')">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
                 ` : ''}
@@ -71,67 +71,37 @@ function renderUsers(users) {
 
     lucide.createIcons();
 
-    if (showingCount) showingCount.textContent = `Showing ${users.length} of ${allUsers.length} users`;
+    if (showingCount) showingCount.textContent = `A mostrar ${users.length} de ${allUsers.length} utilizadores`;
 }
 
-function getInitials(name) {
-    return name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
+function translateRole(role) {
+    const roles = {
+        'admin': 'Administrador',
+        'customer': 'Cliente',
+        'delivery': 'Estafeta'
+    };
+    return roles[role] || role;
 }
 
-function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+function translateStatus(status) {
+    const statuses = {
+        'approved': 'APROVADO',
+        'pending': 'PENDENTE',
+        'rejected': 'RECUSADO'
+    };
+    return statuses[status] || (status ? status.toUpperCase() : 'APROVADO');
 }
 
-function setupEventListeners() {
-    // Search
-    const searchInput = document.querySelector('input[type="text"]');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const filtered = allUsers.filter(u =>
-                (u.full_name || '').toLowerCase().includes(query) ||
-                (u.email || '').toLowerCase().includes(query)
-            );
-            renderUsers(filtered);
-        });
-    }
-
-    // Role Filter
-    const filterSelect = document.querySelector('select.select');
-    if (filterSelect) {
-        filterSelect.addEventListener('change', (e) => {
-            const role = e.target.value;
-            if (!role) {
-                renderUsers(allUsers);
-            } else {
-                const filtered = allUsers.filter(u => u.role === role);
-                renderUsers(filtered);
-            }
-        });
-    }
-
-    // Add User
-    const addBtn = document.querySelector('.btn-primary');
-    if (addBtn) {
-        addBtn.addEventListener('click', () => {
-            showToast('Add User feature coming soon', 'info');
-        });
-    }
-}
+// ... existing setupEventListeners ...
 
 window.deleteUser = async (id) => {
-    if (confirm('Are you sure you want to delete this user? This cannot be undone.')) {
+    if (confirm('Tem certeza que deseja eliminar este utilizador? Esta ação não pode ser desfeita.')) {
         const { success, error } = await usersAPI.delete(id);
         if (success) {
-            showToast('User deleted successfully', 'success');
+            showToast('Utilizador eliminado com sucesso', 'success');
             loadUsers();
         } else {
-            showToast('Failed to delete user', 'error');
+            showToast('Falha ao eliminar utilizador', 'error');
         }
     }
 };

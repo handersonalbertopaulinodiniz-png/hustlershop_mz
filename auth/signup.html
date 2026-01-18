@@ -16,59 +16,77 @@
         <div class="auth-card animate-scale-in">
             <div class="text-center mb-6">
                 <img src="../assets/images/logo.png" alt="HustlerShop" class="auth-logo">
-                <h1 class="text-3xl font-bold gradient-text">Create Account</h1>
-                <p class="text-secondary">Join HustlerShop today</p>
+                <h1 class="text-3xl font-bold gradient-text">Criar Conta</h1>
+                <p class="text-secondary">Junte-se ao HustlerShop hoje</p>
             </div>
 
             <form id="signupForm">
                 <div class="input-group">
-                    <label class="input-label required" for="fullName">Full Name</label>
-                    <input type="text" id="fullName" class="input" placeholder="Enter your full name" required>
+                    <label class="input-label required" for="fullName">Nome Completo</label>
+                    <input type="text" id="fullName" class="input" placeholder="Seu nome completo" required>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label required" for="email">Email</label>
-                    <input type="email" id="email" class="input" placeholder="Enter your email" required>
+                    <label class="input-label required" for="email">E-mail</label>
+                    <input type="email" id="email" class="input" placeholder="seu@email.com" required>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label" for="phone">Phone</label>
-                    <input type="tel" id="phone" class="input" placeholder="Enter your phone number">
+                    <label class="input-label" for="phone">Telefone</label>
+                    <input type="tel" id="phone" class="input" placeholder="8x xxx xxxx">
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label required" for="password">Password</label>
-                    <input type="password" id="password" class="input" placeholder="Create a password" required>
-                    <span class="input-helper">Must be at least 8 characters</span>
+                    <label class="input-label required" for="password">Senha</label>
+                    <input type="password" id="password" class="input" placeholder="Crie uma senha" required>
+                    <span class="input-helper">Mínimo de 8 caracteres</span>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label required" for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" class="input" placeholder="Confirm your password"
-                        required>
+                    <label class="input-label required" for="confirmPassword">Confirmar Senha</label>
+                    <input type="password" id="confirmPassword" class="input" placeholder="Repita sua senha" required>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label required" for="role">I am a</label>
+                    <label class="input-label required" for="role">Eu sou um</label>
                     <select id="role" class="select" required>
-                        <option value="customer">Customer</option>
-                        <option value="delivery">Delivery Person</option>
+                        <option value="customer">Cliente</option>
+                        <option value="delivery">Estafeta (Entregador)</option>
                     </select>
+                </div>
+
+                <!-- Campos Extras para Estafeta -->
+                <div id="deliveryFields" class="hidden animate-fade-in">
+                    <div class="input-group">
+                        <label class="input-label required" for="biNumber">Número do BI</label>
+                        <input type="text" id="biNumber" class="input" placeholder="Documento de Identidade">
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label required" for="transportType">Meio de Transporte</label>
+                        <select id="transportType" class="select">
+                            <option value="">Selecione o transporte</option>
+                            <option value="mota">Mota</option>
+                            <option value="carro">Carro</option>
+                            <option value="bicicleta">Bicicleta</option>
+                            <option value="a_pe">A pé</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="input-group">
                     <label class="checkbox">
                         <input type="checkbox" id="terms" required>
-                        <span class="text-sm">I agree to the Terms and Conditions</span>
+                        <span class="text-sm">Eu concordo com os Termos e Condições</span>
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-full mb-4">Create Account</button>
+                <button type="submit" class="btn btn-primary w-full mb-4">Criar Minha Conta</button>
 
                 <div class="text-center">
                     <p class="text-sm text-secondary">
-                        Already have an account?
-                        <a href="./login.html" class="text-primary-600 font-medium hover:underline">Sign in</a>
+                        Já tem uma conta?
+                        <a href="./login.html" class="text-primary-600 font-medium hover:underline">Entrar</a>
                     </p>
                 </div>
             </form>
@@ -101,6 +119,21 @@
         }
 
         const form = document.getElementById('signupForm');
+        const roleSelect = document.getElementById('role');
+        const deliveryFields = document.getElementById('deliveryFields');
+
+        // Show/Hide delivery fields
+        roleSelect.addEventListener('change', () => {
+            if (roleSelect.value === 'delivery') {
+                deliveryFields.classList.remove('hidden');
+                document.getElementById('biNumber').required = true;
+                document.getElementById('transportType').required = true;
+            } else {
+                deliveryFields.classList.add('hidden');
+                document.getElementById('biNumber').required = false;
+                document.getElementById('transportType').required = false;
+            }
+        });
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -109,34 +142,42 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
 
             if (password !== confirmPassword) {
-                showToast('Passwords do not match', 'error');
+                showToast('As senhas não coincidem', 'error');
                 return;
             }
 
             if (password.length < 8) {
-                showToast('Password must be at least 8 characters', 'error');
+                showToast('A senha deve ter pelo menos 8 caracteres', 'error');
                 return;
             }
 
+            const role = roleSelect.value;
             const userData = {
-                fullName: document.getElementById('fullName').value,
+                full_name: document.getElementById('fullName').value,
                 phone: document.getElementById('phone').value,
-                role: document.getElementById('role').value
+                role: role
             };
+
+            // Add delivery specific data
+            if (role === 'delivery') {
+                userData.bi_number = document.getElementById('biNumber').value;
+                userData.transport_type = document.getElementById('transportType').value;
+            }
 
             const email = document.getElementById('email').value;
 
             const submitBtn = form.querySelector('button[type="submit"]');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating account...';
+            submitBtn.textContent = 'Criando conta...';
 
             const result = await signUp(email, password, userData);
 
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Create Account';
+            submitBtn.textContent = 'Criar Minha Conta';
 
             if (result.success) {
-                if (userData.role === 'customer') {
+                showToast('Conta criada com sucesso!', 'success');
+                if (role === 'customer') {
                     router.navigate('/auth/login.html');
                 } else {
                     router.navigate('/auth/pending-approval.html');

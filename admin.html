@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - HustlerShop</title>
+    <title>Login Admin - HustlerShop</title>
     <link rel="stylesheet" href="assets/css/main.css">
     <style>
         body {
@@ -35,18 +35,18 @@
     <div class="login-card">
         <div class="logo-area">
             <img src="assets/images/logo.png" alt="HustlerShop" width="64" height="64">
-            <h2 class="text-xl font-bold mt-4">Admin Access</h2>
+            <h2 class="text-xl font-bold mt-4">Acesso Administrativo</h2>
         </div>
         <form id="adminLoginForm">
             <div class="form-group mb-4">
-                <label class="block text-sm font-medium mb-1">Username</label>
+                <label class="block text-sm font-medium mb-1">Utilizador</label>
                 <input type="text" id="username" class="input w-full" placeholder="admin" required>
             </div>
             <div class="form-group mb-6">
-                <label class="block text-sm font-medium mb-1">Password</label>
+                <label class="block text-sm font-medium mb-1">Palavra-passe</label>
                 <input type="password" id="password" class="input w-full" placeholder="••••••" required>
             </div>
-            <button type="submit" class="btn btn-primary w-full">Enter Panel</button>
+            <button type="submit" class="btn btn-primary w-full">Entrar no Painel</button>
         </form>
     </div>
 
@@ -61,8 +61,8 @@
                 const adminUser = {
                     id: 'admin-master',
                     role: 'admin',
-                    full_name: 'Master Admin',
-                    email: 'admin@system.local'
+                    full_name: 'Handerson Diniz',
+                    email: 'handersonalbertopaulinodiniz@gmail.com'
                 };
                 localStorage.setItem('user', JSON.stringify(adminUser));
                 window.location.href = 'admin/dashboard.html';
