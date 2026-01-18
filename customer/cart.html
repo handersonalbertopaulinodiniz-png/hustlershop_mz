@@ -5,92 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart - HustlerShop</title>
-    <link rel="icon" type="image/png" href="../favicon.png">`r`n  <link rel="apple-touch-icon" href="../favicon.png">`r`n  <link rel="stylesheet" href="../assets/css/main.css">
-</head>
-
-<body>
-    <div class="app-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="HustlerShop" style="height: 40px;">
-                <h2 class="font-bold text-xl">HustlerShop</h2>
-            </div>
-            <nav class="sidebar-content">
-                <a href="/customer/dashboard.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">🏠</span>
-                    <span class="sidebar-nav-link-text">Dashboard</span>
-                </a>
-                <a href="/customer/cart.html" class="sidebar-nav-link active">
-                    <span class="sidebar-nav-link-icon">🛒</span>
-                    <span class="sidebar-nav-link-text">Cart</span>
-                </a>
-                <a href="/customer/orders.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">📦</span>
-                    <span class="sidebar-nav-link-text">Orders</span>
-                </a>
-                <a href="/customer/wishlist.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">❤️</span>
-                    <span class="sidebar-nav-link-text">Wishlist</span>
-                </a>
-                <a href="/customer/profile.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">👤</span>
-                    <span class="sidebar-nav-link-text">Profile</span>
-                </a>
-            </nav>
-            <div class="sidebar-footer">
-                <a href="/auth/logout.html" class="sidebar-nav-link" data-logout>
-                    <span class="sidebar-nav-link-icon">🚪</span>
-                    <span class="sidebar-nav-link-text">Logout</span>
-                </a>
-            </div>
-        </aside>
-
-        <main class="main-content">
-            <header class="topbar">
-                <div class="topbar-left">
-                    <button class="btn btn-ghost btn-icon" data-mobile-menu>☰</button>
-                    <h1 class="text-xl font-semibold">Shopping Cart</h1>
-                </div>
-                <div class="topbar-right">
-                    <button class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
-                        <span class="theme-icon">🌙</span>
-                    </button>
-                    <div class="avatar" data-user-avatar>U</div>
-                </div>
-            </header>
-
-            <div class="page-content">
-                <div class="container">
-                    <div id="cart-container"></div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script type="module">
-        import { initAuth, requireAuth } from '../assets/js/core/auth.js';
-        import { initSidebar } from '../assets/js/components/sidebar.js';
-        import { initTopbar } from '../assets/js/components/topbar.js';
-        import { initCart, cart } from '../assets/js/modules/cart.js';
-
-        async function init() {
-            await initAuth();
-            if (!await requireAuth()) return;
-
-            initSidebar();
-            initTopbar();
-            await initCart();
-
-            cart.renderCart('cart-container');
-
-            cart.onChange(() => {
-                cart.renderCart('cart-container');
-            });
-        }
-
-        init();
-    </script>
-
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="apple-touch-icon" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
     <style>
         .cart-items {
             margin-bottom: var(--space-6);
@@ -166,6 +83,90 @@
             margin-bottom: var(--space-4);
         }
     </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="40">
+                <h2 class="font-bold text-xl">HustlerShop</h2>
+            </div>
+            <nav class="sidebar-content">
+                <a href="/customer/dashboard.html" class="sidebar-nav-link">
+                    <span class="sidebar-nav-link-icon">🏠</span>
+                    <span class="sidebar-nav-link-text">Dashboard</span>
+                </a>
+                <a href="/customer/cart.html" class="sidebar-nav-link active">
+                    <span class="sidebar-nav-link-icon">🛒</span>
+                    <span class="sidebar-nav-link-text">Cart</span>
+                </a>
+                <a href="/customer/orders.html" class="sidebar-nav-link">
+                    <span class="sidebar-nav-link-icon">📦</span>
+                    <span class="sidebar-nav-link-text">Orders</span>
+                </a>
+                <a href="/customer/wishlist.html" class="sidebar-nav-link">
+                    <span class="sidebar-nav-link-icon">❤️</span>
+                    <span class="sidebar-nav-link-text">Wishlist</span>
+                </a>
+                <a href="/customer/profile.html" class="sidebar-nav-link">
+                    <span class="sidebar-nav-link-icon">👤</span>
+                    <span class="sidebar-nav-link-text">Profile</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/auth/logout.html" class="sidebar-nav-link" data-logout>
+                    <span class="sidebar-nav-link-icon">🚪</span>
+                    <span class="sidebar-nav-link-text">Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="btn btn-ghost btn-icon" data-mobile-menu>☰</button>
+                    <h1 class="text-xl font-semibold">Shopping Cart</h1>
+                </div>
+                <div class="topbar-right">
+                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                    <div class="avatar" data-user-avatar>U</div>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <div class="container">
+                    <div id="cart-container"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initAuth, requireAuth } from '../assets/js/core/auth.js';
+        import { initSidebar } from '../assets/js/components/sidebar.js';
+        import { initTopbar } from '../assets/js/components/topbar.js';
+        import { initCart, cart } from '../assets/js/modules/cart.js';
+
+        async function init() {
+            await initAuth();
+            if (!await requireAuth()) return;
+
+            initSidebar();
+            initTopbar();
+            await initCart();
+
+            cart.renderCart('cart-container');
+
+            cart.onChange(() => {
+                cart.renderCart('cart-container');
+            });
+        }
+
+        init();
+    </script>
 </body>
 
 </html>
