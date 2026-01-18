@@ -8,6 +8,46 @@ import { cart } from '../modules/cart.js';
 let currentUser = null;
 let currentProfile = null;
 
+// Session timeout (30 minutes of inactivity)
+const SESSION_TIMEOUT = 30 * 60 * 1000;
+let sessionTimer = null;
+
+// Input Validation Helpers
+const validators = {
+    email: (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    },
+    
+    password: (password) => {
+        // Minimum 8 characters, at least one letter and one number
+        return password.length >= 8 && /[A-Za-z]/.test(password) && /\d/.test(password);
+    },
+    
+    phone: (phone) => {
+        // Basic phone validation (adjust for your region)
+        const phoneRegex = /^[+]?[\d\s()-]{9,}$/;
+        return phoneRegex.test(phone);
+    },
+    
+    sanitizeInput: (input) => {
+        if (typeof input !== 'string') return input;
+        // Basic XSS prevention
+        return input.replace(/[<>]/g, '');
+    }
+};
+
+// Reset session timeout
+const resetSessionTimeout = () => {
+    if (sessionTimer) clearTimeout(sessionTimer);
+    
+    sessionTimer = setTimeout(() => {
+        console.warn('Session expired due to inactivity');
+        signOut();
+        showToast('Session expired. Please sign in again.', 'warning');
+    }, SESSION_TIMEOUT);
+};
+
 // Get Current User
 export const getCurrentUser = () => currentUser;
 export const getCurrentProfile = () => currentProfile;
@@ -74,8 +114,19 @@ const loadUserProfile = async () => {
 
         currentProfile = data;
 
-        // Store in localStorage for quick access
-        localStorage.setItem('userProfile', JSON.stringify(data));
+        // SECURITY: Store minimal data in localStorage
+        // Avoid storing sensitive information
+        const safeProfile = {
+            id: data.id,
+            email: data.email,
+            full_name: data.full_name,
+            role: data.role,
+            approval_status: data.approval_status
+        };
+        localStorage.setItem('userProfile', JSON.stringify(safeProfile));
+
+        // Reset session timeout on profile load
+        resetSessionTimeout();
 
         return data;
     } catch (error) {
@@ -87,14 +138,43 @@ const loadUserProfile = async () => {
 // Sign Up
 export const signUp = async (email, password, userData) => {
     try {
+        // Input validation
+        if (!validators.email(email)) {
+            throw new Error('Invalid email format');
+        }
+        
+        if (!validators.password(password)) {
+            throw new Error('Password must be at least 8 characters with letters and numbers');
+        }
+        
+        if (!userData.fullName || userData.fullName.trim().length < 2) {
+            throw new Error('Full name is required (minimum 2 characters)');
+        }
+        
+        if (userData.phone && !validators.phone(userData.phone)) {
+            throw new Error('Invalid phone number format');
+        }
+
+        // Sanitize inputs
+        const sanitizedData = {
+            fullName: validators.sanitizeInput(userData.fullName.trim()),
+            phone: userData.phone ? validators.sanitizeInput(userData.phone.trim()) : null,
+            role: userData.role || ROLES.CUSTOMER
+        };
+
+        // Validate role
+        if (!Object.values(ROLES).includes(sanitizedData.role)) {
+            throw new Error('Invalid role specified');
+        }
+
         // Create auth user
         const { data: authData, error: authError } = await supabase.auth.signUp({
-            email,
+            email: email.toLowerCase().trim(),
             password,
             options: {
                 data: {
-                    full_name: userData.fullName,
-                    role: userData.role || ROLES.CUSTOMER
+                    full_name: sanitizedData.fullName,
+                    role: sanitizedData.role
                 }
             }
         });
@@ -106,11 +186,11 @@ export const signUp = async (email, password, userData) => {
             .from(TABLES.USERS)
             .insert({
                 id: authData.user.id,
-                email: email,
-                full_name: userData.fullName,
-                phone: userData.phone,
-                role: userData.role || ROLES.CUSTOMER,
-                approval_status: userData.role === ROLES.CUSTOMER ? APPROVAL_STATUS.APPROVED : APPROVAL_STATUS.PENDING,
+                email: email.toLowerCase().trim(),
+                full_name: sanitizedData.fullName,
+                phone: sanitizedData.phone,
+                role: sanitizedData.role,
+                approval_status: sanitizedData.role === ROLES.CUSTOMER ? APPROVAL_STATUS.APPROVED : APPROVAL_STATUS.PENDING,
                 created_at: new Date().toISOString()
             });
 
@@ -121,16 +201,26 @@ export const signUp = async (email, password, userData) => {
         return { success: true, user: authData.user };
     } catch (error) {
         console.error('Sign up error:', error);
-        showToast(error.message || 'Failed to create account', 'error');
-        return { success: false, error };
+        const errorMessage = error.message || 'Failed to create account';
+        showToast(errorMessage, 'error');
+        return { success: false, error: errorMessage };
     }
 };
 
 // Sign In
 export const signIn = async (email, password) => {
     try {
+        // Input validation
+        if (!validators.email(email)) {
+            throw new Error('Invalid email format');
+        }
+        
+        if (!password || password.length < 6) {
+            throw new Error('Password is required');
+        }
+
         const { data, error } = await supabase.auth.signInWithPassword({
-            email,
+            email: email.toLowerCase().trim(),
             password
         });
 
@@ -138,6 +228,9 @@ export const signIn = async (email, password) => {
 
         currentUser = data.user;
         await loadUserProfile();
+        
+        // Start session timeout monitoring
+        resetSessionTimeout();
 
         // Check approval status
         if (currentProfile.approval_status === APPROVAL_STATUS.PENDING) {
@@ -178,14 +271,24 @@ export const signIn = async (email, password) => {
 // Sign Out
 export const signOut = async () => {
     try {
+        // Clear session timeout
+        if (sessionTimer) {
+            clearTimeout(sessionTimer);
+            sessionTimer = null;
+        }
+
         const { error } = await supabase.auth.signOut();
 
         if (error) throw error;
 
         currentUser = null;
         currentProfile = null;
+        
+        // Clear all sensitive data from storage
         localStorage.removeItem('user');
         localStorage.removeItem('userProfile');
+        localStorage.removeItem('guestCart'); // Clear guest cart on logout
+        sessionStorage.clear(); // Clear any session data
 
         showToast('Signed out successfully', 'success');
         router.navigate('../auth/login.html');
@@ -237,9 +340,43 @@ export const updatePassword = async (newPassword) => {
 // Update Profile
 export const updateProfile = async (updates) => {
     try {
+        // Sanitize and validate updates
+        const sanitizedUpdates = {};
+        
+        if (updates.full_name) {
+            if (updates.full_name.trim().length < 2) {
+                throw new Error('Full name must be at least 2 characters');
+            }
+            sanitizedUpdates.full_name = validators.sanitizeInput(updates.full_name.trim());
+        }
+        
+        if (updates.phone) {
+            if (!validators.phone(updates.phone)) {
+                throw new Error('Invalid phone number format');
+            }
+            sanitizedUpdates.phone = validators.sanitizeInput(updates.phone.trim());
+        }
+        
+        if (updates.email) {
+            if (!validators.email(updates.email)) {
+                throw new Error('Invalid email format');
+            }
+            sanitizedUpdates.email = updates.email.toLowerCase().trim();
+        }
+
+        // Prevent role/approval_status changes through this method
+        delete sanitizedUpdates.role;
+        delete sanitizedUpdates.approval_status;
+        delete sanitizedUpdates.id;
+        delete sanitizedUpdates.created_at;
+
+        if (Object.keys(sanitizedUpdates).length === 0) {
+            throw new Error('No valid updates provided');
+        }
+
         const { error } = await supabase
             .from(TABLES.USERS)
-            .update(updates)
+            .update(sanitizedUpdates)
             .eq('id', currentUser.id);
 
         if (error) throw error;
@@ -250,8 +387,9 @@ export const updateProfile = async (updates) => {
         return { success: true };
     } catch (error) {
         console.error('Update profile error:', error);
-        showToast('Failed to update profile', 'error');
-        return { success: false, error };
+        const errorMessage = error.message || 'Failed to update profile';
+        showToast(errorMessage, 'error');
+        return { success: false, error: errorMessage };
     }
 };
 

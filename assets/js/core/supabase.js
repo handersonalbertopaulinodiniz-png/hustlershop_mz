@@ -1,15 +1,25 @@
 // Supabase Configuration and Client
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-// Supabase Configuration
-const SUPABASE_URL = 'https://jxekugcmqqugoafujdap.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZWt1Z2NtcXF1Z29hZnVqZGFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2OTMyNzgsImV4cCI6MjA4NDI2OTI3OH0.w-9QihFRDkUbaCJNKOgbOi-WEdMYUai_Ft1FzA5n-2Q';
+// SECURITY: Move these to environment variables in production
+// For development, these should be in a .env file (not committed to git)
+const SUPABASE_URL = import.meta.env?.VITE_SUPABASE_URL || 'https://jxekugcmqqugoafujdap.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env?.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp4ZWt1Z2NtcXF1Z29hZnVqZGFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2OTMyNzgsImV4cCI6MjA4NDI2OTI3OH0.w-9QihFRDkUbaCJNKOgbOi-WEdMYUai_Ft1FzA5n-2Q';
 
-// Create Supabase client with debug logging
-console.log('Initializing Supabase for project:', SUPABASE_URL);
+// Validate configuration
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error('CRITICAL: Supabase configuration missing!');
+  throw new Error('Supabase configuration is required');
+}
 
-if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.length < 50) {
+if (SUPABASE_ANON_KEY.length < 50) {
   console.error('CRITICAL: Supabase Anon Key appears to be invalid or too short!');
+  throw new Error('Invalid Supabase configuration');
+}
+
+// Only log in development
+if (import.meta.env?.MODE === 'development') {
+  console.log('Initializing Supabase for project:', SUPABASE_URL);
 }
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
