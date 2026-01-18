@@ -180,6 +180,23 @@ export const ordersAPI = {
             filters: { status },
             orderBy: { column: 'created_at', ascending: false }
         });
+    },
+
+    // Adiciona um item ao pedido
+    addItem: (data) => api.create(TABLES.ORDER_ITEMS, data),
+
+    // Adiciona múltiplos itens de uma vez (Bulk Insert)
+    addItems: async (items) => {
+        try {
+            const { data, error } = await supabase
+                .from(TABLES.ORDER_ITEMS)
+                .insert(items)
+                .select();
+            if (error) throw error;
+            return { success: true, data };
+        } catch (error) {
+            return { success: false, error: handleSupabaseError(error) };
+        }
     }
 };
 

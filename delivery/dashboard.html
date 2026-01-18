@@ -5,36 +5,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Dashboard - HustlerShop</title>
-    <link rel="icon" type="image/png" href="../favicon.png">`r`n  <link rel="apple-touch-icon" href="../favicon.png">`r`n  <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="apple-touch-icon" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <style>
+        .delivery-card {
+            margin-bottom: var(--space-4);
+        }
+
+        .delivery-actions {
+            display: flex;
+            gap: var(--space-3);
+            margin-top: var(--space-4);
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="HustlerShop" style="height: 40px;">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="40" height="40">
                 <h2 class="font-bold text-xl">Delivery Panel</h2>
             </div>
             <nav class="sidebar-content">
-                <a href="/delivery/dashboard.html" class="sidebar-nav-link active">
+                <a href="dashboard.html" class="sidebar-nav-link active">
                     <span class="sidebar-nav-link-icon">🏠</span>
                     <span class="sidebar-nav-link-text">Dashboard</span>
                 </a>
-                <a href="/delivery/active-orders.html" class="sidebar-nav-link">
+                <a href="active-orders.html" class="sidebar-nav-link">
                     <span class="sidebar-nav-link-icon">🚚</span>
                     <span class="sidebar-nav-link-text">Active Orders</span>
                 </a>
-                <a href="/delivery/history.html" class="sidebar-nav-link">
+                <a href="history.html" class="sidebar-nav-link">
                     <span class="sidebar-nav-link-icon">📜</span>
                     <span class="sidebar-nav-link-text">History</span>
                 </a>
-                <a href="/delivery/profile.html" class="sidebar-nav-link">
+                <a href="profile.html" class="sidebar-nav-link">
                     <span class="sidebar-nav-link-icon">👤</span>
                     <span class="sidebar-nav-link-text">Profile</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
-                <a href="/auth/logout.html" class="sidebar-nav-link" data-logout>
+                <a href="../auth/logout.html" class="sidebar-nav-link" data-logout>
                     <span class="sidebar-nav-link-icon">🚪</span>
                     <span class="sidebar-nav-link-text">Logout</span>
                 </a>
@@ -44,11 +57,11 @@
         <main class="main-content">
             <header class="topbar">
                 <div class="topbar-left">
-                    <button class="btn btn-ghost btn-icon" data-mobile-menu>☰</button>
+                    <button type="button" class="btn btn-ghost btn-icon" data-mobile-menu>☰</button>
                     <h1 class="text-xl font-semibold">Delivery Dashboard</h1>
                 </div>
                 <div class="topbar-right">
-                    <button class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
+                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
                         <span class="theme-icon">🌙</span>
                     </button>
                     <div class="avatar" data-user-avatar>D</div>
@@ -89,17 +102,6 @@
         init();
     </script>
 
-    <style>
-        .delivery-card {
-            margin-bottom: var(--space-4);
-        }
-
-        .delivery-actions {
-            display: flex;
-            gap: var(--space-3);
-            margin-top: var(--space-4);
-        }
-    </style>
 </body>
 
 </html>

@@ -37,35 +37,18 @@
 </head>
 
 <body>
-    <div class="app-container flex items-center justify-center" style="min-height: 100vh;">
-        <div class="card p-12 text-center max-w-lg shadow-2xl">
+    <div class="app-container flex items-center justify-center p-4 min-h-screen">
+        <div id="success-content" class="card p-12 text-center max-w-lg shadow-2xl">
             <div class="success-animation mb-6">✅</div>
-            <h1 class="text-4xl font-bold gradient-text mb-4">Pedido Confirmado!</h1>
-            <p class="text-secondary text-lg mb-8">
-                Parabéns! Seu pedido foi recebido com sucesso e já está sendo processado por nossa equipe.
-            </p>
-
-            <div class="bg-tertiary rounded-xl p-6 mb-8 text-left space-y-3">
-                <div class="flex justify-between">
-                    <span class="text-secondary">Número do Pedido:</span>
-                    <span class="font-bold">#12589</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-secondary">Método de Pagamento:</span>
-                    <span class="font-bold">M-Pesa</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-secondary">Tempo de Entrega:</span>
-                    <span class="font-bold">30 - 60 min</span>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-3">
-                <a href="orders.html" class="btn btn-primary py-4">Acompanhar Pedido</a>
-                <a href="dashboard.html" class="btn btn-ghost">Voltar para a Loja</a>
-            </div>
+            <h1 class="text-4xl font-bold gradient-text mb-4">Processando...</h1>
+            <p class="text-secondary">Aguarde enquanto confirmamos seu pedido.</p>
         </div>
     </div>
+
+    <script type="module">
+        import { initSuccessPage } from '../assets/js/modules/success.js';
+        initSuccessPage();
+    </script>
 </body>
 
 </html>

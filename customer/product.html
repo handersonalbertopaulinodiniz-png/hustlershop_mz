@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto - HustlerShop</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="32">
+                <span class="font-bold text-lg">HustlerShop</span>
+            </div>
+            <nav class="sidebar-content">
+                <a href="dashboard.html" class="nav-item"><span>🏠</span><span>Loja</span></a>
+                <a href="cart.html" class="nav-item"><span>🛒</span><span>Carrinho</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button type="button" class="btn btn-ghost" onclick="history.back()">← Voltar</button>
+            </header>
+
+            <div class="page-content" id="productDetails">
+                <div class="animate-pulse flex flex-col md:flex-row gap-8">
+                    <div class="w-full md:w-1/2 h-96 bg-tertiary rounded-2xl"></div>
+                    <div class="w-full md:w-1/2 space-y-4">
+                        <div class="h-8 bg-tertiary w-3/4 rounded"></div>
+                        <div class="h-4 bg-tertiary w-full rounded"></div>
+                        <div class="h-4 bg-tertiary w-full rounded"></div>
+                        <div class="h-12 bg-tertiary w-1/3 rounded"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initAuth } from '../assets/js/core/auth.js';
+        import { productsAPI } from '../assets/js/core/api.js';
+        import { cart } from '../assets/js/modules/cart.js';
+        import { router } from '../assets/js/core/router.js';
+
+        async function init() {
+            await initAuth();
+            const params = router.getQueryParams();
+            const id = params.id;
+
+            if (!id) {
+                router.navigate('dashboard.html');
+                return;
+            }
+
+            const result = await productsAPI.getById(id);
+            if (result.success) {
+                renderProduct(result.data);
+            } else {
+                document.getElementById('productDetails').innerHTML = '<p>Produto não encontrado.</p>';
+            }
+        }
+
+        function renderProduct(product) {
+            const container = document.getElementById('productDetails');
+            container.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-8 animate-fade-in">
+                    <div class="w-full md:w-1/2 h-96 rounded-2xl overflow-hidden shadow-xl">
+                        <img src="${product.image_url || '../assets/images/placeholder.png'}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="w-full md:w-1/2 space-y-6">
+                        <h1 class="text-4xl font-bold">${product.name}</h1>
+                        <p class="text-xl text-secondary">${product.description || 'Sem descrição.'}</p>
+                        <div class="text-3xl font-bold text-primary">
+                            ${product.price.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}
+                        </div>
+                        <div class="flex gap-4 pt-4">
+                            <button id="addBtn" class="btn btn-primary px-8 py-4 text-lg">Adicionar ao Carrinho</button>
+                            <button class="btn btn-ghost px-8 py-4 text-lg">❤️ Wishlist</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('addBtn').onclick = () => {
+                cart.addItem(product.id, 1, product);
+            };
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

@@ -2,6 +2,7 @@
 import { supabase, TABLES, ROLES, APPROVAL_STATUS } from './supabase.js';
 import { showToast } from '../components/toast.js';
 import { router } from './router.js';
+import { cart } from '../modules/cart.js';
 
 // Current User State
 let currentUser = null;
@@ -41,6 +42,10 @@ export const initAuth = async () => {
             if (event === 'SIGNED_IN') {
                 currentUser = session.user;
                 await loadUserProfile();
+                // Sincroniza o carrinho de convidado se houver
+                if (cart && cart.syncCart) {
+                    await cart.syncCart(currentUser.id);
+                }
                 handleAuthRedirect();
             } else if (event === 'SIGNED_OUT') {
                 currentUser = null;
@@ -137,7 +142,7 @@ export const signIn = async (email, password) => {
         // Check approval status
         if (currentProfile.approval_status === APPROVAL_STATUS.PENDING) {
             showToast('Your account is pending approval', 'warning');
-            router.navigate('/auth/pending-approval.html');
+            router.navigate('../auth/pending-approval.html');
             return { success: true, pending: true };
         }
 
@@ -170,7 +175,7 @@ export const signOut = async () => {
         localStorage.removeItem('userProfile');
 
         showToast('Signed out successfully', 'success');
-        router.navigate('/auth/login.html');
+        router.navigate('../auth/login.html');
 
         return { success: true };
     } catch (error) {
@@ -243,14 +248,14 @@ const handleAuthRedirect = () => {
 
     switch (role) {
         case ROLES.ADMIN:
-            router.navigate('/admin/dashboard.html');
+            router.navigate('../admin/dashboard.html');
             break;
         case ROLES.DELIVERY:
-            router.navigate('/delivery/dashboard.html');
+            router.navigate('../delivery/dashboard.html');
             break;
         case ROLES.CUSTOMER:
         default:
-            router.navigate('/customer/dashboard.html');
+            router.navigate('../customer/dashboard.html');
             break;
     }
 };
@@ -258,7 +263,7 @@ const handleAuthRedirect = () => {
 // Require Auth Middleware
 export const requireAuth = async () => {
     if (!isAuthenticated()) {
-        router.navigate('/auth/login.html');
+        router.navigate('../auth/login.html');
         return false;
     }
     return true;
@@ -272,7 +277,7 @@ export const requireRole = async (role) => {
     }
 
     if (!hasRole(role)) {
-        router.navigate('/pages/error/403.html');
+        router.navigate('../pages/error/403.html');
         return false;
     }
 

@@ -640,3 +640,18 @@ blockquote {
         padding: 0 !important;
     }
 }
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+.min-h-screen {
+    min-height: 100vh;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

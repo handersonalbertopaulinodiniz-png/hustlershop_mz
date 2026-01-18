@@ -64,35 +64,37 @@
                     <div class="space-y-8">
                         <section class="card p-6">
                             <h3 class="text-lg font-bold mb-6">Endereço de Entrega</h3>
-                            <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <form id="checkoutForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="input-group md:col-span-2">
                                     <label class="input-label">Endereço Completo</label>
-                                    <input type="text" class="input" placeholder="Av, Rua, Número, Bairro" required>
+                                    <input type="text" id="address" class="input" placeholder="Av, Rua, Número, Bairro"
+                                        required>
                                 </div>
                                 <div class="input-group">
                                     <label class="input-label">Cidade</label>
-                                    <input type="text" class="input" value="Maputo" required>
+                                    <input type="text" id="city" class="input" value="Maputo" required>
                                 </div>
                                 <div class="input-group">
                                     <label class="input-label">Telefone de Contato</label>
-                                    <input type="tel" class="input" placeholder="+258" required>
+                                    <input type="tel" id="phone" class="input" placeholder="+258" required>
                                 </div>
+                                <button type="submit" id="hiddenSubmit" style="display: none;"></button>
                             </form>
                         </section>
 
                         <section class="card p-6">
                             <h3 class="text-lg font-bold mb-6">Método de Pagamento</h3>
-                            <div class="space-y-4">
-                                <div class="payment-option active">
-                                    <input type="radio" name="payment" checked>
+                            <div class="space-y-4" id="paymentOptions">
+                                <div class="payment-option active" data-method="mpesa">
+                                    <input type="radio" name="payment" value="mpesa" checked>
                                     <div class="text-2xl">📱</div>
                                     <div>
                                         <p class="font-bold">M-Pesa / m-Kesh</p>
                                         <p class="text-sm text-secondary">Pagamento móvel instantâneo</p>
                                     </div>
                                 </div>
-                                <div class="payment-option">
-                                    <input type="radio" name="payment">
+                                <div class="payment-option" data-method="cash">
+                                    <input type="radio" name="payment" value="cash">
                                     <div class="text-2xl">💵</div>
                                     <div>
                                         <p class="font-bold">Dinheiro na Entrega</p>
@@ -123,8 +125,8 @@
                                     <span class="text-primary-600">MZN 150.00</span>
                                 </div>
                             </div>
-                            <button class="btn btn-primary w-full py-4 text-lg" id="confirmOrderBtn">Confirmar
-                                Pedido</button>
+                            <button type="button" class="btn btn-primary w-full py-4 text-lg"
+                                id="confirmOrderBtn">Confirmar Pedido</button>
                             <p class="text-center text-xs text-secondary mt-4">Ao confirmar, você concorda com nossos
                                 termos de serviço.</p>
                         </div>
@@ -136,12 +138,53 @@
 
     <script type="module">
         import { initAuth } from '../assets/js/core/auth.js';
+        import { processPayment } from '../assets/js/modules/payment.js';
+        import { cart } from '../assets/js/modules/cart.js';
 
-        document.getElementById('confirmOrderBtn').onclick = () => {
-            window.location.href = 'success.html';
-        };
+        async function init() {
+            await initAuth();
+            await cart.loadCart();
 
-        initAuth();
+            const btn = document.getElementById('confirmOrderBtn');
+            const form = document.getElementById('checkoutForm');
+
+            btn.onclick = async () => {
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                const method = document.querySelector('input[name="payment"]:checked').value;
+                const address = document.getElementById('address').value;
+                const city = document.getElementById('city').value;
+                const phone = document.getElementById('phone').value;
+
+                btn.disabled = true;
+                btn.textContent = 'Processando...';
+
+                const result = await processPayment({
+                    method,
+                    shippingAddress: `${address}, ${city}`,
+                    phone
+                });
+
+                if (!result.success) {
+                    btn.disabled = false;
+                    btn.textContent = 'Confirmar Pedido';
+                }
+            };
+
+            // Toggle active class on payment options
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.onclick = () => {
+                    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
+                    opt.classList.add('active');
+                    opt.querySelector('input').checked = true;
+                };
+            });
+        }
+
+        init();
     </script>
 </body>
 
