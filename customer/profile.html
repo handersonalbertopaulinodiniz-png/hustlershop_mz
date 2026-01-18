@@ -1,16 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=../pages/error/500.html">
-    <title>Em Manutenção...</title>
+    <title>Meu Perfil - HustlerShop</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/variables.css">
 </head>
 
 <body>
-    <script>
-        window.location.href = '../pages/error/500.html';
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="32">
+                <span class="font-bold text-lg">HustlerShop</span>
+            </div>
+            <nav class="sidebar-content">
+                <a href="dashboard.html" class="nav-item"><span>🏠</span><span>Início</span></a>
+                <a href="profile.html" class="nav-item active"><span>👤</span><span>Perfil</span></a>
+                <a href="orders.html" class="nav-item"><span>📦</span><span>Pedidos</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h2 class="text-xl font-bold">Configurações de Perfil</h2>
+            </header>
+
+            <div class="page-content">
+                <div class="max-w-2xl mx-auto space-y-8">
+                    <!-- Profile Basic Info -->
+                    <section class="card p-8">
+                        <div class="flex items-center gap-6 mb-8">
+                            <div
+                                class="w-24 h-24 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center text-3xl font-bold">
+                                H
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold">Handerson Diniz</h3>
+                                <p class="text-secondary">Cliente Bronze</p>
+                            </div>
+                        </div>
+
+                        <form class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="input-group">
+                                    <label class="input-label">Nome</label>
+                                    <input type="text" class="input" value="Handerson">
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label">Apelido</label>
+                                    <input type="text" class="input" value="Diniz">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">E-mail</label>
+                                <input type="email" class="input" value="handerson@exemplo.com" disabled>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">Telefone</label>
+                                <input type="tel" class="input" value="+258 84 000 0000">
+                            </div>
+                            <div class="pt-4">
+                                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Security -->
+                    <section class="card p-8">
+                        <h3 class="text-lg font-bold mb-6">Segurança</h3>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-bold">Senha</p>
+                                <p class="text-sm text-secondary">Alterar sua senha de acesso</p>
+                            </div>
+                            <button class="btn btn-ghost">Alterar</button>
+                        </div>
+                    </section>
+
+                    <!-- Danger Zone -->
+                    <section class="card p-8 border-error/50">
+                        <h3 class="text-lg font-bold text-error mb-4">Zona de Perigo</h3>
+                        <p class="text-secondary text-sm mb-6">Uma vez que você deletar sua conta, não há volta. Por
+                            favor, tenha certeza.</p>
+                        <button class="btn btn-ghost text-error hover:bg-error/10">Excluir minha conta</button>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initAuth } from '../assets/js/core/auth.js';
+        initAuth();
     </script>
 </body>
 

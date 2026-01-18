@@ -1,16 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=../pages/error/500.html">
-    <title>Em Manutenção...</title>
+    <title>Finalizar Compra - HustlerShop</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <style>
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: var(--space-8);
+        }
+
+        @media (max-width: 1024px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .payment-option {
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .payment-option.active {
+            border-color: var(--primary-500);
+            background: var(--primary-50);
+        }
+    </style>
 </head>
 
 <body>
-    <script>
-        window.location.href = '../pages/error/500.html';
+    <div class="app-container">
+        <aside class="sidebar">
+            <!-- Sidebar simplified or standard -->
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="32">
+                <span class="font-bold text-lg">HustlerShop</span>
+            </div>
+            <nav class="sidebar-content">
+                <a href="dashboard.html" class="nav-item"><span>🏠</span><span>Loja</span></a>
+                <a href="cart.html" class="nav-item"><span>🛒</span><span>Carrinho</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h2 class="text-xl font-bold">Checkout</h2>
+            </header>
+
+            <div class="page-content">
+                <div class="checkout-grid">
+                    <!-- Form Section -->
+                    <div class="space-y-8">
+                        <section class="card p-6">
+                            <h3 class="text-lg font-bold mb-6">Endereço de Entrega</h3>
+                            <form class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="input-group md:col-span-2">
+                                    <label class="input-label">Endereço Completo</label>
+                                    <input type="text" class="input" placeholder="Av, Rua, Número, Bairro" required>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label">Cidade</label>
+                                    <input type="text" class="input" value="Maputo" required>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label">Telefone de Contato</label>
+                                    <input type="tel" class="input" placeholder="+258" required>
+                                </div>
+                            </form>
+                        </section>
+
+                        <section class="card p-6">
+                            <h3 class="text-lg font-bold mb-6">Método de Pagamento</h3>
+                            <div class="space-y-4">
+                                <div class="payment-option active">
+                                    <input type="radio" name="payment" checked>
+                                    <div class="text-2xl">📱</div>
+                                    <div>
+                                        <p class="font-bold">M-Pesa / m-Kesh</p>
+                                        <p class="text-sm text-secondary">Pagamento móvel instantâneo</p>
+                                    </div>
+                                </div>
+                                <div class="payment-option">
+                                    <input type="radio" name="payment">
+                                    <div class="text-2xl">💵</div>
+                                    <div>
+                                        <p class="font-bold">Dinheiro na Entrega</p>
+                                        <p class="text-sm text-secondary">Pague ao receber o produto</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Summary Section -->
+                    <div class="space-y-6">
+                        <div class="card p-6 sticky top-24">
+                            <h3 class="text-lg font-bold mb-6">Resumo do Pedido</h3>
+                            <div class="space-y-4 mb-6" id="orderItemsSummary">
+                                <!-- Items from cart -->
+                                <div class="flex justify-between text-sm">
+                                    <span>Subtotal</span>
+                                    <span>MZN 0.00</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Taxa de Entrega</span>
+                                    <span>MZN 150.00</span>
+                                </div>
+                                <hr class="border-light">
+                                <div class="flex justify-between font-bold text-xl">
+                                    <span>Total</span>
+                                    <span class="text-primary-600">MZN 150.00</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-full py-4 text-lg" id="confirmOrderBtn">Confirmar
+                                Pedido</button>
+                            <p class="text-center text-xs text-secondary mt-4">Ao confirmar, você concorda com nossos
+                                termos de serviço.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initAuth } from '../assets/js/core/auth.js';
+
+        document.getElementById('confirmOrderBtn').onclick = () => {
+            window.location.href = 'success.html';
+        };
+
+        initAuth();
     </script>
 </body>
 

@@ -1,25 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logout - HustlerShop</title>
+    <title>Saindo... - HustlerShop</title>
     <link rel="icon" type="image/png" href="../favicon.png">
-    <link rel="apple-touch-icon" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
 </head>
 
 <body>
+    <div class="auth-container flex items-center justify-center" style="min-height: 100vh;">
+        <div class="text-center">
+            <div class="spinner mb-4"></div>
+            <p class="text-secondary">Saindo da sua conta segura...</p>
+        </div>
+    </div>
+
     <script type="module">
         import { signOut } from '../assets/js/core/auth.js';
 
-        // Sign out and redirect
-        async function logout() {
-            await signOut();
-            window.location.href = './login.html';
+        async function handleLogout() {
+            try {
+                await signOut();
+            } finally {
+                // Clear any leftover local state
+                localStorage.clear();
+                sessionStorage.clear();
+                // Redirect to login
+                window.location.href = 'login.html';
+            }
         }
 
-        logout();
+        handleLogout();
     </script>
 </body>
 

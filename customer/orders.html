@@ -1,16 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=../pages/error/500.html">
-    <title>Em Manutenção...</title>
+    <title>Meus Pedidos - HustlerShop</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/variables.css">
 </head>
 
 <body>
-    <script>
-        window.location.href = '../pages/error/500.html';
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="32">
+                <span class="font-bold text-lg">HustlerShop</span>
+            </div>
+            <nav class="sidebar-content">
+                <a href="dashboard.html" class="nav-item"><span>🏠</span><span>Início</span></a>
+                <a href="cart.html" class="nav-item"><span>🛒</span><span>Carrinho</span></a>
+                <a href="orders.html" class="nav-item active"><span>📦</span><span>Meus Pedidos</span></a>
+                <a href="wishlist.html" class="nav-item"><span>❤️</span><span>Favoritos</span></a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h2 class="text-xl font-bold">Meus Pedidos</h2>
+            </header>
+
+            <div class="page-content">
+                <div class="space-y-6" id="ordersContainer">
+                    <!-- Order Card Example -->
+                    <div class="card overflow-hidden">
+                        <div class="bg-tertiary p-4 flex justify-between items-center border-b">
+                            <div>
+                                <span class="text-xs text-secondary uppercase font-bold">Pedido #12589</span>
+                                <p class="text-sm">Realizado em 18 Jan 2026</p>
+                            </div>
+                            <span class="badge badge-warning">Em processamento</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex gap-4 items-center">
+                                <div class="w-16 h-16 bg-tertiary rounded"></div>
+                                <div class="flex-1">
+                                    <h4 class="font-bold">iPhone 15 Pro Max - 256GB</h4>
+                                    <p class="text-sm text-secondary">Qtd: 1</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold">MZN 85,000.00</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-tertiary/20 flex justify-between items-center">
+                            <button class="btn btn-ghost btn-sm text-primary-600">Ver Detalhes</button>
+                            <div class="text-sm">Total do Pedido: <span class="font-bold text-lg">MZN 85,150.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="empty-state py-12">
+                        <p class="text-secondary">Você ainda não tem outros pedidos cadastrados.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initAuth } from '../assets/js/core/auth.js';
+        initAuth();
     </script>
 </body>
 
