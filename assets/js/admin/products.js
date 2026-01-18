@@ -19,7 +19,7 @@ async function loadCategories() {
         const select = document.querySelector('select.select');
         select.innerHTML = '<option value="all">All Categories</option>' +
             categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-        
+
         // Modal Select
         const modalSelect = document.getElementById('productCategory');
         if (modalSelect) {
@@ -57,29 +57,37 @@ function renderProducts(products) {
     }
 
     tableBody.innerHTML = products.map(product => `
-        <tr class="border-b hover:bg-tertiary transition">
+        <tr class="border-b border-zinc-800 hover:bg-tertiary transition-all">
             <td class="p-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gray-200 rounded flex items-center justify-center overflow-hidden">
-                        ${product.image_url ? `<img src="${product.image_url}" class="w-full h-full object-cover">` : '🖼️'}
+                    <div class="w-10 h-10 bg-tertiary rounded-lg flex items-center justify-center overflow-hidden border border-zinc-800">
+                        ${product.image_url ? `<img src="${product.image_url}" class="w-full h-full object-cover">` : '<i data-lucide="image" class="w-5 h-5 text-tertiary"></i>'}
                     </div>
-                    <span class="font-medium">${product.name}</span>
+                    <span class="font-bold text-primary">${product.name}</span>
                 </div>
             </td>
-            <td class="p-4 text-secondary">${product.categories ? product.categories.name : 'Uncategorized'}</td>
-            <td class="p-4 font-medium">${formatCurrency(product.price)}</td>
-            <td class="p-4">${product.stock_quantity}</td>
+            <td class="p-4 text-secondary uppercase text-xs tracking-wider">${product.categories ? product.categories.name : 'Uncategorized'}</td>
+            <td class="p-4 font-bold text-primary">${formatCurrency(product.price)}</td>
+            <td class="p-4 text-primary">${product.stock_quantity}</td>
             <td class="p-4">
-                <span class="text-xs px-2 py-1 rounded-full ${product.stock_quantity > 10 ? 'bg-success-light text-success' : (product.stock_quantity > 0 ? 'bg-warning-light text-warning' : 'bg-error-light text-error')}">
+                <span class="status-badge ${product.stock_quantity > 0 ? 'success' : 'danger'}">
                     ${product.stock_quantity > 0 ? 'In Stock' : 'Out of Stock'}
                 </span>
             </td>
             <td class="p-4 text-right">
-                <button type="button" class="btn btn-ghost btn-sm btn-icon" onclick="editProduct('${product.id}')">✏️</button>
-                <button type="button" class="btn btn-ghost btn-sm btn-icon text-error" onclick="deleteProduct('${product.id}')">🗑️</button>
+                <div class="flex justify-end gap-2">
+                    <button type="button" aria-label="Edit product" class="btn btn-secondary btn-sm p-2" onclick="editProduct('${product.id}')">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    </button>
+                    <button type="button" aria-label="Delete product" class="btn btn-secondary btn-sm p-2 text-primary hover:bg-zinc-900 transition-colors" onclick="deleteProduct('${product.id}')">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
             </td>
         </tr>
     `).join('');
+
+    lucide.createIcons();
 
     if (showingCount) showingCount.textContent = `Showing ${products.length} of ${allProducts.length} products`;
 }
@@ -168,7 +176,7 @@ function closeProductModal() {
 
 async function handleProductSubmit(e) {
     e.preventDefault();
-    
+
     const id = document.getElementById('productId').value;
     const data = {
         name: document.getElementById('productName').value,

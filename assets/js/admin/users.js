@@ -38,34 +38,38 @@ function renderUsers(users) {
     }
 
     tableBody.innerHTML = users.map(user => `
-        <tr class="border-b hover:bg-tertiary transition">
+        <tr class="border-b border-zinc-800 hover:bg-tertiary transition-all">
             <td class="p-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold text-sm">
+                    <div class="w-8 h-8 rounded-full bg-tertiary text-primary flex items-center justify-center font-bold text-xs border border-zinc-800 uppercase tracking-tighter">
                         ${getInitials(user.full_name || user.email || 'U')}
                     </div>
-                    <span class="font-medium">${user.full_name || 'Unnamed User'}</span>
+                    <span class="font-bold text-primary">${user.full_name || 'Unnamed User'}</span>
                 </div>
             </td>
             <td class="p-4">
-                <span class="${getRoleBadgeClass(user.role)}">
+                <span class="status-badge ${user.role === 'admin' ? 'success' : 'warning'}">
                     ${user.role}
                 </span>
             </td>
-            <td class="p-4 text-secondary">${user.email}</td>
+            <td class="p-4 text-secondary text-sm">${user.email}</td>
             <td class="p-4">
-               <span class="${getStatusColor(user.approval_status || 'approved')} text-sm">
-                ${capitalize(user.approval_status || 'Approved')}
+               <span class="status-badge ${user.approval_status === 'approved' ? 'success' : (user.approval_status === 'pending' ? 'warning' : 'danger')}">
+                ${capitalize(user.approval_status || 'approved')}
                </span>
             </td>
-            <td class="p-4 text-secondary text-sm">${formatDate(user.created_at)}</td>
+            <td class="p-4 text-tertiary text-xs tracking-wider uppercase">${formatDate(user.created_at)}</td>
             <td class="p-4 text-right">
                 ${user.role !== 'admin' ? `
-                <button type="button" class="btn btn-ghost btn-sm btn-icon text-error" onclick="deleteUser('${user.id}')" title="Delete User">🗑️</button>
+                <button type="button" aria-label="Delete user" class="btn btn-secondary btn-sm p-2 text-primary hover:bg-zinc-900 transition-colors" onclick="deleteUser('${user.id}')">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
                 ` : ''}
             </td>
         </tr>
     `).join('');
+
+    lucide.createIcons();
 
     if (showingCount) showingCount.textContent = `Showing ${users.length} of ${allUsers.length} users`;
 }
@@ -77,25 +81,6 @@ function getInitials(name) {
         .join('')
         .toUpperCase()
         .slice(0, 2);
-}
-
-function getRoleBadgeClass(role) {
-    const base = 'px-2 py-1 rounded text-xs font-semibold uppercase';
-    switch (role) {
-        case 'admin': return `${base} bg-purple-50 text-purple-600`;
-        case 'delivery': return `${base} bg-orange-50 text-orange-600`;
-        case 'customer': return `${base} bg-blue-50 text-blue-600`;
-        default: return `${base} bg-gray-50 text-gray-600`;
-    }
-}
-
-function getStatusColor(status) {
-    switch (status) {
-        case 'pending': return 'text-warning';
-        case 'approved': return 'text-success';
-        case 'rejected': return 'text-error';
-        default: return 'text-secondary';
-    }
 }
 
 function capitalize(str) {

@@ -184,6 +184,7 @@ export const signOut = async () => {
 
         currentUser = null;
         currentProfile = null;
+        localStorage.removeItem('user');
         localStorage.removeItem('userProfile');
 
         showToast('Signed out successfully', 'success');

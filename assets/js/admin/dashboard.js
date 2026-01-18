@@ -60,15 +60,15 @@ async function loadRecentActivity() {
     }
 
     const activityHTML = recentOrders.map(order => {
-        const initials = order.customer_name ? order.customer_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : '??';
-        const colorClass = ['bg-emerald', 'bg-blue', 'bg-purple', 'bg-orange'][Math.floor(Math.random() * 4)];
+        const customerName = order.profiles?.full_name || 'Anonymous Customer';
+        const initials = customerName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
         return `
             <div class="sale-item cursor-pointer" onclick="window.location.href='orders.html?id=${order.id}'">
                 <div class="item-left">
-                    <div class="avatar ${colorClass}">${initials}</div>
+                    <div class="avatar">${initials}</div>
                     <div class="item-info">
-                        <span class="item-name">${order.customer_name || 'Anonymous Customer'}</span>
+                        <span class="item-name">${customerName}</span>
                         <span class="item-email">Order #${order.id.slice(0, 8)} • ${formatDate(order.created_at)}</span>
                     </div>
                 </div>

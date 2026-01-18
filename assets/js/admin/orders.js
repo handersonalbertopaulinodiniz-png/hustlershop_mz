@@ -32,34 +32,39 @@ function renderOrders(orders) {
     const tableBody = document.querySelector('tbody');
 
     tableBody.innerHTML = orders.map(order => `
-        <tr class="border-b hover:bg-tertiary transition">
-            <td class="p-4 font-mono text-sm">#${order.id.slice(0, 8)}</td>
+        <tr class="border-b border-zinc-800 hover:bg-tertiary transition-all">
+            <td class="p-4 font-bold text-primary text-xs uppercase tracking-tighter">#${order.id.slice(0, 8)}</td>
             <td class="p-4">
-                <span class="font-medium block">${order.users?.full_name || 'Guest/Unknown'}</span>
-                <span class="text-xs text-secondary">${order.users?.email || ''}</span>
+                <span class="font-bold text-primary block">${order.users?.full_name || 'Customer'}</span>
+                <span class="text-xs text-tertiary">${order.users?.email || ''}</span>
             </td>
-            <td class="p-4 font-bold">${formatCurrency(order.total_amount)}</td>
+            <td class="p-4 font-bold text-primary">${formatCurrency(order.total_amount)}</td>
             <td class="p-4">
-                <span class="text-xs px-2 py-1 rounded-full ${getStatusColor(order.status)}">
-                    ${order.status.toUpperCase()}
+                <span class="status-badge ${getStatusBadgeClass(order.status)}">
+                    ${order.status}
                 </span>
             </td>
-            <td class="p-4 text-secondary text-sm">${formatDate(order.created_at)}</td>
+            <td class="p-4 text-tertiary text-xs tracking-wider uppercase">${formatDate(order.created_at)}</td>
             <td class="p-4 text-right">
-                <button class="btn btn-ghost btn-sm" onclick="viewOrder('${order.id}')">View</button>
+                <button class="btn btn-secondary btn-sm px-3 flex items-center gap-1" onclick="viewOrder('${order.id}')">
+                    <i data-lucide="eye" class="w-3 h-3"></i>
+                    View
+                </button>
             </td>
         </tr>
     `).join('');
+
+    lucide.createIcons();
 }
 
-function getStatusColor(status) {
+function getStatusBadgeClass(status) {
     switch (status) {
-        case 'pending': return 'bg-yellow-50 text-yellow-600';
-        case 'processing': return 'bg-blue-50 text-blue-600';
-        case 'shipped': return 'bg-purple-50 text-purple-600';
-        case 'delivered': return 'bg-green-50 text-green-600';
-        case 'cancelled': return 'bg-red-50 text-red-600';
-        default: return 'bg-gray-50 text-gray-600';
+        case 'pending':
+        case 'processing': return 'warning';
+        case 'shipped':
+        case 'delivered': return 'success';
+        case 'cancelled': return 'danger';
+        default: return 'warning';
     }
 }
 
