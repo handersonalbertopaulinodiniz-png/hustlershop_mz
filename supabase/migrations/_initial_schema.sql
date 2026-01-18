@@ -57,6 +57,7 @@ CREATE TABLE public.orders (
   payment_method TEXT,
   payment_status TEXT DEFAULT 'pending' CHECK (payment_status IN ('pending', 'completed', 'failed', 'refunded')),
   shipping_address TEXT,
+  phone_contact TEXT,
   tracking_number TEXT,
   notes TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
