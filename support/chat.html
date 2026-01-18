@@ -1,16 +1,170 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=../pages/error/500.html">
-    <title>Em Manutenção...</title>
+    <title>Suporte ao Cliente - HustlerShop</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <style>
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: var(--space-6);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+            background-color: var(--bg-main);
+        }
+
+        .message {
+            max-width: 80%;
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: var(--surface);
+            color: var(--text-main);
+            border: 1px solid var(--border-light);
+            border-bottom-left-radius: 0;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: var(--primary-600);
+            color: white;
+            border-bottom-right-radius: 0;
+        }
+
+        .chat-input-area {
+            padding: var(--space-4);
+            background: var(--surface);
+            border-top: 1px solid var(--border-light);
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .message-time {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 4px;
+            text-align: right;
+        }
+    </style>
 </head>
 
 <body>
-    <script>
-        window.location.href = '../pages/error/500.html';
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="32">
+                <span class="font-bold text-lg">HustlerShop</span>
+            </div>
+            <nav class="sidebar-content">
+                <a href="../customer/dashboard.html" class="nav-item">
+                    <span>🏠</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="../customer/cart.html" class="nav-item">
+                    <span>🛒</span>
+                    <span>Carrinho</span>
+                </a>
+                <a href="chat.html" class="nav-item active">
+                    <span>💬</span>
+                    <span>Suporte</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn btn-ghost w-full justify-start">
+                    <span>🚪</span>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h2 class="text-xl font-bold">Suporte via Chat</h2>
+                </div>
+                <div class="topbar-right">
+                    <button class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message received">
+                            Olá! Como podemos ajudar você hoje? Nossa equipe responderá em instantes.
+                            <div class="message-time">09:00</div>
+                        </div>
+                    </div>
+
+                    <form class="chat-input-area" id="chatForm">
+                        <input type="text" id="messageInput" class="input" placeholder="Digite sua mensagem..."
+                            required>
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initAuth } from '../assets/js/core/auth.js';
+
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const messageInput = document.getElementById('messageInput');
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = messageInput.value.trim();
+            if (!text) return;
+
+            const now = new Date();
+            const time = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message sent';
+            msgDiv.innerHTML = `${text}<div class="message-time">${time}</div>`;
+
+            chatMessages.appendChild(msgDiv);
+            messageInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulação de resposta
+            setTimeout(() => {
+                const replyDiv = document.createElement('div');
+                replyDiv.className = 'message received';
+                replyDiv.innerHTML = `Entendido! Estamos processando sua dúvida sobre "${text}".<div class="message-time">${time}</div>`;
+                chatMessages.appendChild(replyDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1500);
+        });
+
+        initAuth();
     </script>
 </body>
 
