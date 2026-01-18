@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - HustlerShop Admin</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="32" height="32">
+                <span class="font-bold text-lg">HustlerShop</span>
+            </div>
+
+            <nav class="sidebar-content">
+                <div class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item">
+                        <span>📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="products.html" class="nav-item">
+                        <span>📦</span>
+                        <span>Products</span>
+                    </a>
+                    <a href="users.html" class="nav-item">
+                        <span>👥</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="orders.html" class="nav-item active">
+                        <span>🛍️</span>
+                        <span>Orders</span>
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <span>⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button type="button" id="logoutBtn" class="btn btn-ghost w-full justify-start gap-3">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button type="button" class="btn btn-ghost btn-icon lg:hidden" id="sidebarToggle">
+                        ☰
+                    </button>
+                    <h2 class="text-xl font-bold m-0">All Orders</h2>
+                </div>
+                <div class="topbar-right">
+                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <div class="card overflow-hidden p-0">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-surface border-b">
+                            <tr>
+                                <th class="p-4 font-medium text-secondary">Order ID</th>
+                                <th class="p-4 font-medium text-secondary">Customer</th>
+                                <th class="p-4 font-medium text-secondary">Total</th>
+                                <th class="p-4 font-medium text-secondary">Status</th>
+                                <th class="p-4 font-medium text-secondary">Date</th>
+                                <th class="p-4 font-medium text-secondary text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- TODO: Implement Dynamic Order Loading via JS -->
+                            <tr>
+                                <td colspan="6" class="p-4 text-center text-secondary">No orders found (Integration
+                                    pending)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script type="module" src="../assets/js/admin/orders.js"></script>
+</body>
+
+</html>

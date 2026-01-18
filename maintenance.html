@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade in Progress | HustlerShop</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+        .error-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-6);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .error-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 700px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .maintenance-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-8);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: var(--space-8);
+            position: relative;
+        }
+
+        .icon-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto var(--space-6);
+        }
+
+        .icon-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px dashed #f5576c;
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .icon-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .floating-icons {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .floating-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            animation: float-icon 3s ease-in-out infinite;
+        }
+
+        .floating-icon:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .floating-icon:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .floating-icon:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        @keyframes float-icon {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .status-section {
+            margin-top: var(--space-6);
+            padding-top: var(--space-6);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .status-label {
+            font-size: var(--text-xs);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--space-3);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-bottom: var(--space-3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            border-radius: var(--radius-full);
+            animation: progress 2s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% {
+                width: 0%;
+            }
+
+            50% {
+                width: 85%;
+            }
+
+            100% {
+                width: 0%;
+            }
+        }
+
+        .status-text {
+            font-size: var(--text-sm);
+            color: var(--text-tertiary);
+            font-style: italic;
+        }
+
+        .error-badge {
+            display: inline-block;
+            padding: var(--space-2) var(--space-4);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-full);
+            color: white;
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            margin-bottom: var(--space-4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .error-title {
+            font-size: var(--text-5xl);
+            font-weight: var(--font-bold);
+            color: white;
+            margin-bottom: var(--space-4);
+            line-height: 1.2;
+        }
+
+        .error-title .highlight {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .error-description {
+            font-size: var(--text-lg);
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: var(--space-8);
+            line-height: var(--line-relaxed);
+        }
+
+        .error-actions {
+            display: flex;
+            gap: var(--space-4);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-error {
+            padding: var(--space-4) var(--space-8);
+            border-radius: var(--radius-xl);
+            font-weight: var(--font-semibold);
+            text-decoration: none;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .btn-error-primary {
+            background: white;
+            color: #f5576c;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-error-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-error-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-error-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .error-footer {
+            position: absolute;
+            bottom: var(--space-6);
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: var(--text-sm);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: var(--space-4);
+            justify-content: center;
+            margin-top: var(--space-2);
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .error-title {
+                font-size: var(--text-3xl);
+            }
+
+            .maintenance-card {
+                padding: var(--space-6);
+            }
+
+            .icon-container {
+                width: 120px;
+                height: 120px;
+            }
+
+            .icon-center {
+                width: 80px;
+                height: 80px;
+                font-size: 40px;
+            }
+
+            .error-actions {
+                flex-direction: column;
+            }
+
+            .btn-error {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-page">
+        <div class="error-content">
+            <div class="maintenance-card">
+                <div class="floating-icons">
+                    <div class="floating-icon">🔧</div>
+                    <div class="floating-icon">⚙️</div>
+                    <div class="floating-icon">🛠️</div>
+                </div>
+
+                <div class="icon-container">
+                    <div class="icon-circle"></div>
+                    <div class="icon-center">H</div>
+                </div>
+
+                <h2 style="font-size: var(--text-2xl); font-weight: var(--font-bold); margin-bottom: var(--space-2);">
+                    Premium <span
+                        style="background: linear-gradient(135deg, #4facfe, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Upgrade</span>
+                    In Progress
+                </h2>
+
+                <p style="color: var(--text-secondary); margin-bottom: var(--space-6);">
+                    Estamos elevando o padrão da HustlerShop. Nossa plataforma está recebendo uma
+                    atualização exclusiva para transformar sua experiência de compra.
+                </p>
+
+                <div class="status-section">
+                    <div class="status-label">Status da Manutenção</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="status-text">Estimativa de retorno: 15 minutos</div>
+                </div>
+            </div>
+
+            <div class="error-badge">⚡ Sistema em Manutenção</div>
+
+            <h1 class="error-title">
+                Estamos <span class="highlight">Melhorando</span> para Você
+            </h1>
+
+            <p class="error-description">
+                Nossa equipe está trabalhando para garantir que você tenha a melhor experiência possível.
+                Voltaremos em breve com novidades incríveis!
+            </p>
+
+            <div class="error-actions">
+                <button onclick="location.reload()" class="btn-error btn-error-primary">
+                    🔄 Verificar Conexão
+                </button>
+                <a href="support/chat.html" class="btn-error btn-error-secondary">
+                    💬 Centro de Suporte →
+                </a>
+            </div>
+        </div>
+
+        <div class="error-footer">
+            <p>🟢 © 2026 HustlerShop MZ. Exclusive Systems.</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Facebook</a>
+                <a href="#" class="footer-link">Instagram</a>
+                <a href="#" class="footer-link">Status Page</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { themeEngine } from './assets/js/core/theme-engine.js';
+        themeEngine.init();
+
+        // Auto-refresh after 30 seconds
+        setTimeout(() => {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+
+</html>

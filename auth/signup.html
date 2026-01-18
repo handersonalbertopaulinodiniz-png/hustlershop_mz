@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#ffffff">
+    <title>Sign Up - HustlerShop</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="apple-touch-icon" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-card animate-scale-in">
+            <div class="text-center mb-6">
+                <img src="../assets/images/logo.png" alt="HustlerShop" class="auth-logo">
+                <h1 class="text-3xl font-bold gradient-text">Create Account</h1>
+                <p class="text-secondary">Join HustlerShop today</p>
+            </div>
+
+            <form id="signupForm">
+                <div class="input-group">
+                    <label class="input-label required" for="fullName">Full Name</label>
+                    <input type="text" id="fullName" class="input" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label required" for="email">Email</label>
+                    <input type="email" id="email" class="input" placeholder="Enter your email" required>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="phone">Phone</label>
+                    <input type="tel" id="phone" class="input" placeholder="Enter your phone number">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label required" for="password">Password</label>
+                    <input type="password" id="password" class="input" placeholder="Create a password" required>
+                    <span class="input-helper">Must be at least 8 characters</span>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label required" for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="input" placeholder="Confirm your password"
+                        required>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label required" for="role">I am a</label>
+                    <select id="role" class="select" required>
+                        <option value="customer">Customer</option>
+                        <option value="delivery">Delivery Person</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label class="checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <span class="text-sm">I agree to the Terms and Conditions</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full mb-4">Create Account</button>
+
+                <div class="text-center">
+                    <p class="text-sm text-secondary">
+                        Already have an account?
+                        <a href="./login.html" class="text-primary-600 font-medium hover:underline">Sign in</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-ghost btn-icon theme-toggle fixed top-4 right-4 z-50" data-theme-toggle>
+        <span class="theme-icon">🌙</span>
+    </button>
+
+    <script type="module">
+        import { signUp } from '../assets/js/core/auth.js';
+        import { showToast } from '../assets/js/components/toast.js';
+        import { router } from '../assets/js/core/router.js';
+        import { getTheme, onThemeChange } from '../assets/js/core/theme-engine.js';
+
+        // Theme Toggle Logic
+        const themeToggle = document.querySelector('[data-theme-toggle]');
+        if (themeToggle) {
+            const icon = themeToggle.querySelector('.theme-icon');
+            const updateIcon = (theme) => {
+                icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+            };
+
+            // Initial state
+            updateIcon(getTheme());
+
+            // Listen for changes
+            onThemeChange(updateIcon);
+        }
+
+        const form = document.getElementById('signupForm');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showToast('Password must be at least 8 characters', 'error');
+                return;
+            }
+
+            const userData = {
+                fullName: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                role: document.getElementById('role').value
+            };
+
+            const email = document.getElementById('email').value;
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating account...';
+
+            const result = await signUp(email, password, userData);
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Create Account';
+
+            if (result.success) {
+                if (userData.role === 'customer') {
+                    router.navigate('/auth/login.html');
+                } else {
+                    router.navigate('/auth/pending-approval.html');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HustlerShop</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="32" height="32">
+                <span class="font-bold text-lg">HustlerShop</span>
+            </div>
+
+            <nav class="sidebar-content">
+                <div class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item active">
+                        <span>📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="products.html" class="nav-item">
+                        <span>📦</span>
+                        <span>Products</span>
+                    </a>
+                    <a href="users.html" class="nav-item">
+                        <span>👥</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <span>🛍️</span>
+                        <span>Orders</span>
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <span>⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button type="button" id="logoutBtn" class="btn btn-ghost w-full justify-start gap-3">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button type="button" class="btn btn-ghost btn-icon lg:hidden" id="sidebarToggle">
+                        ☰
+                    </button>
+                    <h2 class="text-xl font-bold m-0">Dashboard</h2>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="btn btn-ghost btn-icon relative" data-notifications-toggle>
+                        🔔
+                        <span class="absolute top-0 right-0 bg-error text-white text-xs rounded-full px-1"
+                            style="display: none;" data-notification-badge>0</span>
+                    </button>
+
+                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
+                        <span class="theme-icon">🌙</span>
+                    </button>
+
+                    <div class="relative">
+                        <button type="button"
+                            class="flex items-center gap-2 cursor-pointer hover:bg-tertiary p-2 rounded-md transition"
+                            data-user-menu-toggle>
+                            <span
+                                class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold text-sm"
+                                data-user-avatar>AD</span>
+                            <span class="text-sm font-medium hidden md:block" data-user-name>Admin User</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card">
+                        <div>
+                            <p class="text-secondary text-sm mb-1">Total Sales</p>
+                            <h3 class="text-2xl font-bold">MZN 0.00</h3>
+                            <span class="text-success text-sm">↑ 0%</span>
+                        </div>
+                        <div class="stat-icon bg-primary-50 text-primary-600">
+                            💰
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div>
+                            <p class="text-secondary text-sm mb-1">Total Orders</p>
+                            <h3 class="text-2xl font-bold">0</h3>
+                            <span class="text-secondary text-sm">New today</span>
+                        </div>
+                        <div class="stat-icon bg-blue-50 text-blue-600">
+                            🛍️
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div>
+                            <p class="text-secondary text-sm mb-1">Total Users</p>
+                            <h3 class="text-2xl font-bold">0</h3>
+                            <span class="text-success text-sm">Active</span>
+                        </div>
+                        <div class="stat-icon bg-green-50 text-green-600">
+                            👥
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div>
+                            <p class="text-secondary text-sm mb-1">Pending Approvals</p>
+                            <h3 class="text-2xl font-bold" id="pendingCount">0</h3>
+                            <span class="text-warning text-sm">Action needed</span>
+                        </div>
+                        <div class="stat-icon bg-orange-50 text-orange-600">
+                            ⚠️
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <div class="card-header flex justify-between items-center">
+                        <h3 class="text-lg font-bold m-0">Recent Activity</h3>
+                        <button type="button" class="btn btn-ghost btn-sm">View All</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-state">
+                            <p class="text-secondary">No recent activity</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="../assets/js/admin/dashboard.js"></script>
+</body>
+
+</html>

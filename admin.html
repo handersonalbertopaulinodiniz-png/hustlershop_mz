@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - HustlerShop</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--bg-secondary);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: var(--surface);
+            padding: var(--space-8);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: var(--space-6);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <div class="logo-area">
+            <img src="assets/images/logo.png" alt="HustlerShop" width="64" height="64">
+            <h2 class="text-xl font-bold mt-4">Admin Access</h2>
+        </div>
+        <form id="adminLoginForm">
+            <div class="form-group mb-4">
+                <label class="block text-sm font-medium mb-1">Username</label>
+                <input type="text" id="username" class="input w-full" placeholder="admin" required>
+            </div>
+            <div class="form-group mb-6">
+                <label class="block text-sm font-medium mb-1">Password</label>
+                <input type="password" id="password" class="input w-full" placeholder="••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-full">Enter Panel</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+
+            // Manual Credentials Check (as requested)
+            if (user === 'admin' && pass === 'admin') {
+                const adminUser = {
+                    id: 'admin-master',
+                    role: 'admin',
+                    full_name: 'Master Admin',
+                    email: 'admin@system.local'
+                };
+                localStorage.setItem('user', JSON.stringify(adminUser));
+                window.location.href = 'admin/dashboard.html';
+            } else {
+                alert('Invalid Credentials');
+            }
+        });
+
+        // Redirect if already logged in as admin
+        const currentUser = JSON.parse(localStorage.getItem('user'));
+        if (currentUser && currentUser.role === 'admin') {
+            window.location.href = 'admin/dashboard.html';
+        }
+    </script>
+</body>
+
+</html>

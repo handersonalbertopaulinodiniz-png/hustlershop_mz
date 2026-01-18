@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - HustlerShop Admin</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="32" height="32">
+                <span class="font-bold text-lg">HustlerShop</span>
+            </div>
+
+            <nav class="sidebar-content">
+                <div class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item">
+                        <span>📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="products.html" class="nav-item">
+                        <span>📦</span>
+                        <span>Products</span>
+                    </a>
+                    <a href="users.html" class="nav-item">
+                        <span>👥</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <span>🛍️</span>
+                        <span>Orders</span>
+                    </a>
+                    <a href="settings.html" class="nav-item active">
+                        <span>⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button type="button" id="logoutBtn" class="btn btn-ghost w-full justify-start gap-3">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button type="button" class="btn btn-ghost btn-icon lg:hidden" id="sidebarToggle">
+                        ☰
+                    </button>
+                    <h2 class="text-xl font-bold m-0">System Settings</h2>
+                </div>
+                <!-- Standard Topbar Right (will be hydrated by initTopbar/common.js or static markup) -->
+                <div class="topbar-right">
+                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="page-content">
+                <div class="card max-w-2xl">
+                    <h3 class="text-lg font-bold mb-4">General Settings</h3>
+                    <form onsubmit="event.preventDefault(); alert('Settings saved!');">
+                        <div class="form-group">
+                            <label class="label">Store Name</label>
+                            <input type="text" class="input w-full" value="HustlerShop MZ">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label">Delivery Fee (MZN)</label>
+                            <input type="number" class="input w-full" value="150">
+                        </div>
+
+                        <div class="form-group flex items-center gap-3">
+                            <input type="checkbox" id="maintenance" class="toggle">
+                            <label for="maintenance">Maintenance Mode</label>
+                        </div>
+
+                        <div class="form-group flex items-center gap-3">
+                            <input type="checkbox" id="deliveries" class="toggle" checked>
+                            <label for="deliveries">Enable Delivery Service</label>
+                        </div>
+
+                        <div class="mt-6">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script type="module" src="../assets/js/admin/common.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - HustlerShop Admin</title>
+    <link rel="icon" type="image/png" href="../favicon.png">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="HustlerShop" width="32" height="32">
+                <span class="font-bold text-lg">HustlerShop</span>
+            </div>
+
+            <nav class="sidebar-content">
+                <div class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item">
+                        <span>📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="products.html" class="nav-item active">
+                        <span>📦</span>
+                        <span>Products</span>
+                    </a>
+                    <a href="users.html" class="nav-item">
+                        <span>👥</span>
+                        <span>Users</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <span>🛍️</span>
+                        <span>Orders</span>
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <span>⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button type="button" id="logoutBtn" class="btn btn-ghost w-full justify-start gap-3">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button type="button" class="btn btn-ghost btn-icon lg:hidden" id="sidebarToggle">
+                        ☰
+                    </button>
+                    <h2 class="text-xl font-bold m-0">Product Management</h2>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="btn btn-ghost btn-icon relative" data-notifications-toggle>
+                        🔔
+                        <span class="absolute top-0 right-0 bg-error text-white text-xs rounded-full px-1"
+                            style="display: none;" data-notification-badge>0</span>
+                    </button>
+
+                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
+                        <span class="theme-icon">🌙</span>
+                    </button>
+
+                    <div class="relative">
+                        <button type="button"
+                            class="flex items-center gap-2 cursor-pointer hover:bg-tertiary p-2 rounded-md transition"
+                            data-user-menu-toggle>
+                            <span
+                                class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold text-sm"
+                                data-user-avatar>AD</span>
+                            <span class="text-sm font-medium hidden md:block" data-user-name>Admin User</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex gap-4">
+                        <div class="input-group m-0">
+                            <input type="text" class="input" placeholder="Search products...">
+                        </div>
+                        <select class="select w-auto">
+                            <option value="">All Categories</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary">
+                        + Add Product
+                    </button>
+                </div>
+
+                <div class="card overflow-hidden p-0">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-surface border-b">
+                            <tr>
+                                <th class="p-4 font-medium text-secondary">Product</th>
+                                <th class="p-4 font-medium text-secondary">Category</th>
+                                <th class="p-4 font-medium text-secondary">Price</th>
+                                <th class="p-4 font-medium text-secondary">Stock</th>
+                                <th class="p-4 font-medium text-secondary">Status</th>
+                                <th class="p-4 font-medium text-secondary text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                    <div class="p-4 border-t text-center text-secondary text-sm" id="showingCount">
+                        Loading...
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="text-xl font-bold mb-4" id="modalTitle">Add Product</h3>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+
+                <div class="form-group">
+                    <label class="label">Product Name</label>
+                    <input type="text" id="productName" class="input w-full" required>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="label">Category</label>
+                        <select id="productCategory" class="select w-full" required>
+                            <option value="">Select Category</option>
+                            <!-- Options populated via JS -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Price (MZN)</label>
+                        <input type="number" id="productPrice" class="input w-full" min="0" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label class="label">Stock Quantity</label>
+                        <input type="number" id="productStock" class="input w-full" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Image URL</label>
+                        <input type="url" id="productImage" class="input w-full" placeholder="https://">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="label">Description</label>
+                    <textarea id="productDescription" class="textarea w-full" rows="3"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4">
+                    <button type="button" class="btn btn-ghost" id="cancelModalBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="../assets/js/admin/products.js"></script>
+</body>
+
+</html>
