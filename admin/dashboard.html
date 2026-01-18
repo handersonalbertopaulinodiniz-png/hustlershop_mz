@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -8,47 +8,75 @@
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body class="admin-body">
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="HustlerShop" width="32" height="32">
-                <span class="font-bold text-lg">HustlerShop</span>
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i data-lucide="shopping-bag"></i>
+                    </div>
+                    <span class="logo-text">HustlerShop</span>
+                </div>
             </div>
 
             <nav class="sidebar-content">
                 <div class="sidebar-nav">
                     <a href="dashboard.html" class="nav-item active">
-                        <span>📊</span>
+                        <i data-lucide="layout-dashboard"></i>
                         <span>Dashboard</span>
                     </a>
                     <a href="products.html" class="nav-item">
-                        <span>📦</span>
-                        <span>Products</span>
+                        <i data-lucide="package"></i>
+                        <span>Inventory</span>
                     </a>
                     <a href="users.html" class="nav-item">
-                        <span>👥</span>
+                        <i data-lucide="users"></i>
                         <span>Users</span>
                     </a>
                     <a href="orders.html" class="nav-item">
-                        <span>🛍️</span>
+                        <i data-lucide="shopping-cart"></i>
                         <span>Orders</span>
                     </a>
+                    <a href="approvals.html" class="nav-item">
+                        <i data-lucide="check-circle-2"></i>
+                        <span>Approvals</span>
+                        <span class="badge">12</span>
+                    </a>
+                    <a href="earnings.html" class="nav-item">
+                        <i data-lucide="wallet"></i>
+                        <span>Earnings</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-footer-nav">
                     <a href="settings.html" class="nav-item">
-                        <span>⚙️</span>
+                        <i data-lucide="settings"></i>
                         <span>Settings</span>
                     </a>
+                    <button id="logoutBtn" type="button"
+                        class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                    </button>
                 </div>
             </nav>
 
             <div class="sidebar-footer">
-                <button type="button" id="logoutBtn" class="btn btn-ghost w-full justify-start gap-3">
-                    <span>🚪</span>
-                    <span>Logout</span>
-                </button>
+                <div class="user-profile-mini">
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=000&color=fff" alt="Admin">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">Alex Rivera</span>
+                        <span class="user-role">Super Admin</span>
+                    </div>
+                </div>
             </div>
         </aside>
 
@@ -57,94 +85,160 @@
             <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
-                    <button type="button" class="btn btn-ghost btn-icon lg:hidden" id="sidebarToggle">
-                        ☰
-                    </button>
-                    <h2 class="text-xl font-bold m-0">Dashboard</h2>
+                    <div class="search-container">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Search transactions, customers...">
+                    </div>
                 </div>
 
                 <div class="topbar-right">
-                    <button type="button" class="btn btn-ghost btn-icon relative" data-notifications-toggle>
-                        🔔
-                        <span class="absolute top-0 right-0 bg-error text-white text-xs rounded-full px-1 hidden"
-                            data-notification-badge>0</span>
+                    <button type="button" class="icon-btn relative" aria-label="View notifications">
+                        <i data-lucide="bell"></i>
+                        <span class="dot"></span>
                     </button>
 
-                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
-                        <span class="theme-icon">🌙</span>
-                    </button>
+                    <div class="divider-v"></div>
 
-                    <div class="relative">
-                        <button type="button"
-                            class="flex items-center gap-2 cursor-pointer hover:bg-tertiary p-2 rounded-md transition"
-                            data-user-menu-toggle>
-                            <span
-                                class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold text-sm"
-                                data-user-avatar>AD</span>
-                            <span class="text-sm font-medium hidden md:block" data-user-name>Admin User</span>
-                        </button>
-                    </div>
+                    <button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle theme">
+                        <i data-lucide="sun"></i>
+                    </button>
                 </div>
             </header>
 
             <!-- Page Content -->
             <div class="page-content">
                 <!-- Stats Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="stats-grid">
                     <div class="stat-card">
-                        <div>
-                            <p class="text-secondary text-sm mb-1">Total Sales</p>
-                            <h3 class="text-2xl font-bold">MZN 0.00</h3>
-                            <span class="text-success text-sm">↑ 0%</span>
+                        <div class="stat-info">
+                            <p class="stat-label">Total Sales</p>
+                            <h3 class="stat-value">MT 0</h3>
+                            <div class="stat-trend positive">
+                                <i data-lucide="trending-up"></i>
+                                <span>+0.1%</span>
+                                <span class="trend-label">vs last month</span>
+                            </div>
                         </div>
-                        <div class="stat-icon bg-primary-50 text-primary-600">
-                            💰
+                        <div class="stat-icon-box primary">
+                            <i data-lucide="banknote"></i>
                         </div>
                     </div>
 
                     <div class="stat-card">
-                        <div>
-                            <p class="text-secondary text-sm mb-1">Total Orders</p>
-                            <h3 class="text-2xl font-bold">0</h3>
-                            <span class="text-secondary text-sm">New today</span>
+                        <div class="stat-info">
+                            <p class="stat-label">New Customers</p>
+                            <h3 class="stat-value">+2,350</h3>
+                            <div class="stat-trend positive">
+                                <i data-lucide="trending-up"></i>
+                                <span>+180.1%</span>
+                                <span class="trend-label">vs last month</span>
+                            </div>
                         </div>
-                        <div class="stat-icon bg-blue-50 text-blue-600">
-                            🛍️
-                        </div>
-                    </div>
-
-                    <div class="stat-card">
-                        <div>
-                            <p class="text-secondary text-sm mb-1">Total Users</p>
-                            <h3 class="text-2xl font-bold">0</h3>
-                            <span class="text-success text-sm">Active</span>
-                        </div>
-                        <div class="stat-icon bg-green-50 text-green-600">
-                            👥
+                        <div class="stat-icon-box secondary">
+                            <i data-lucide="user-plus"></i>
                         </div>
                     </div>
 
                     <div class="stat-card">
-                        <div>
-                            <p class="text-secondary text-sm mb-1">Pending Approvals</p>
-                            <h3 class="text-2xl font-bold" id="pendingCount">0</h3>
-                            <span class="text-warning text-sm">Action needed</span>
+                        <div class="stat-info">
+                            <p class="stat-label">Active Orders</p>
+                            <h3 class="stat-value">+12,234</h3>
+                            <div class="stat-trend positive">
+                                <i data-lucide="trending-up"></i>
+                                <span>+19%</span>
+                                <span class="trend-label">from yesterday</span>
+                            </div>
                         </div>
-                        <div class="stat-icon bg-orange-50 text-orange-600">
-                            ⚠️
+                        <div class="stat-icon-box success">
+                            <i data-lucide="shopping-cart"></i>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <p class="stat-label">Pending Approvals</p>
+                            <h3 class="stat-value">42</h3>
+                            <div class="stat-trend warning">
+                                <span class="trend-label">Action required</span>
+                            </div>
+                        </div>
+                        <div class="stat-icon-box warning">
+                            <i data-lucide="hourglass"></i>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Activity -->
-                <div class="card">
-                    <div class="card-header flex justify-between items-center">
-                        <h3 class="text-lg font-bold m-0">Recent Activity</h3>
-                        <button type="button" class="btn btn-ghost btn-sm">View All</button>
+                <!-- Recent Activity Section -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <div class="header-title">
+                            <h3>Recent Sales</h3>
+                            <p>Latest transactions from your store</p>
+                        </div>
+                        <a href="orders.html" class="view-all-link">
+                            View All <i data-lucide="arrow-right"></i>
+                        </a>
                     </div>
-                    <div class="card-body">
-                        <div class="empty-state">
-                            <p class="text-secondary">No recent activity</p>
+
+                    <div class="sales-list">
+                        <!-- Sale Item 1 -->
+                        <div class="sale-item">
+                            <div class="item-left">
+                                <div class="avatar bg-emerald">OM</div>
+                                <div class="item-info">
+                                    <span class="item-name">Olivia Martin</span>
+                                    <span class="item-email">olivia.martin@email.com</span>
+                                </div>
+                            </div>
+                            <div class="item-right">
+                                <span class="item-amount">+MT 1,999.00</span>
+                                <span class="status-badge success">SUCCESS</span>
+                            </div>
+                        </div>
+
+                        <!-- Sale Item 2 -->
+                        <div class="sale-item">
+                            <div class="item-left">
+                                <div class="avatar bg-blue">JL</div>
+                                <div class="item-info">
+                                    <span class="item-name">Jackson Lee</span>
+                                    <span class="item-email">jackson.lee@email.com</span>
+                                </div>
+                            </div>
+                            <div class="item-right">
+                                <span class="item-amount">+MT 39.00</span>
+                                <span class="status-badge success">SUCCESS</span>
+                            </div>
+                        </div>
+
+                        <!-- Sale Item 3 -->
+                        <div class="sale-item">
+                            <div class="item-left">
+                                <div class="avatar bg-purple">IN</div>
+                                <div class="item-info">
+                                    <span class="item-name">Isabella Nguyen</span>
+                                    <span class="item-email">isabella.n@email.com</span>
+                                </div>
+                            </div>
+                            <div class="item-right">
+                                <span class="item-amount">+MT 299.00</span>
+                                <span class="status-badge success">SUCCESS</span>
+                            </div>
+                        </div>
+
+                        <!-- Sale Item 4 -->
+                        <div class="sale-item">
+                            <div class="item-left">
+                                <div class="avatar bg-orange">WK</div>
+                                <div class="item-info">
+                                    <span class="item-name">William Kim</span>
+                                    <span class="item-email">will@email.com</span>
+                                </div>
+                            </div>
+                            <div class="item-right">
+                                <span class="item-amount">+MT 99.00</span>
+                                <span class="status-badge warning">PENDING</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -152,6 +246,10 @@
         </main>
     </div>
 
+    <!-- Initialize Lucide Icons -->
+    <script>
+        lucide.createIcons();
+    </script>
     <script type="module" src="../assets/js/admin/dashboard.js"></script>
 </body>
 

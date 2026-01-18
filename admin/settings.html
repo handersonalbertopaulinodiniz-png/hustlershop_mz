@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -8,99 +8,307 @@
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body class="admin-body">
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="HustlerShop" width="32" height="32">
-                <span class="font-bold text-lg">HustlerShop</span>
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i data-lucide="shopping-bag"></i>
+                    </div>
+                    <span class="logo-text">HustlerShop</span>
+                </div>
             </div>
 
-            <nav class="sidebar-content">
+            <nav class="sidebar-content" aria-label="Sidebar Navigation">
                 <div class="sidebar-nav">
                     <a href="dashboard.html" class="nav-item">
-                        <span>📊</span>
+                        <i data-lucide="layout-dashboard"></i>
                         <span>Dashboard</span>
                     </a>
                     <a href="products.html" class="nav-item">
-                        <span>📦</span>
-                        <span>Products</span>
+                        <i data-lucide="package"></i>
+                        <span>Inventory</span>
                     </a>
                     <a href="users.html" class="nav-item">
-                        <span>👥</span>
+                        <i data-lucide="users"></i>
                         <span>Users</span>
                     </a>
                     <a href="orders.html" class="nav-item">
-                        <span>🛍️</span>
+                        <i data-lucide="shopping-cart"></i>
                         <span>Orders</span>
                     </a>
+                    <a href="approvals.html" class="nav-item">
+                        <i data-lucide="check-circle-2"></i>
+                        <span>Approvals</span>
+                        <span class="badge">12</span>
+                    </a>
+                    <a href="earnings.html" class="nav-item">
+                        <i data-lucide="wallet"></i>
+                        <span>Earnings</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-footer-nav">
                     <a href="settings.html" class="nav-item active">
-                        <span>⚙️</span>
+                        <i data-lucide="settings"></i>
                         <span>Settings</span>
                     </a>
+                    <button id="logoutBtn" type="button"
+                        class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                    </button>
                 </div>
             </nav>
 
             <div class="sidebar-footer">
-                <button type="button" id="logoutBtn" class="btn btn-ghost w-full justify-start gap-3">
-                    <span>🚪</span>
-                    <span>Logout</span>
-                </button>
+                <div class="user-profile-mini">
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=000&color=fff" alt="Admin">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">Alex Rivera</span>
+                        <span class="user-role">Super Admin</span>
+                    </div>
+                </div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
+            <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
-                    <button type="button" class="btn btn-ghost btn-icon lg:hidden" id="sidebarToggle">
-                        ☰
-                    </button>
-                    <h2 class="text-xl font-bold m-0">System Settings</h2>
+                    <div class="search-container">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Search settings...">
+                    </div>
                 </div>
-                <!-- Standard Topbar Right (will be hydrated by initTopbar/common.js or static markup) -->
+
                 <div class="topbar-right">
-                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
-                        <span class="theme-icon">🌙</span>
+                    <button type="button" class="icon-btn relative" aria-label="View notifications">
+                        <i data-lucide="bell"></i>
+                        <span class="dot"></span>
+                    </button>
+
+                    <div class="divider-v"></div>
+
+                    <button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle theme">
+                        <i data-lucide="sun"></i>
+                    </button>
+
+                    <div class="divider-v"></div>
+
+                    <button type="button" class="icon-btn" aria-label="User Profile">
+                        <i data-lucide="user"></i>
                     </button>
                 </div>
             </header>
 
+            <!-- Page Content -->
             <div class="page-content">
-                <div class="card max-w-2xl">
-                    <h3 class="text-lg font-bold mb-4">General Settings</h3>
-                    <form onsubmit="event.preventDefault(); alert('Settings saved!');">
-                        <div class="form-group">
-                            <label class="label">Store Name</label>
-                            <input type="text" class="input w-full" value="HustlerShop MZ">
-                        </div>
+                <!-- Breadcrumbs -->
+                <nav class="breadcrumbs mb-4" aria-label="Breadcrumb">
+                    <span class="text-tertiary">Admin</span>
+                    <span class="mx-2 text-tertiary">/</span>
+                    <span class="text-tertiary">Settings</span>
+                    <span class="mx-2 text-tertiary">/</span>
+                    <span class="text-primary font-medium">System Configuration</span>
+                </nav>
 
-                        <div class="form-group">
-                            <label class="label">Delivery Fee (MZN)</label>
-                            <input type="number" class="input w-full" value="150">
-                        </div>
-
-                        <div class="form-group flex items-center gap-3">
-                            <input type="checkbox" id="maintenance" class="toggle">
-                            <label for="maintenance">Maintenance Mode</label>
-                        </div>
-
-                        <div class="form-group flex items-center gap-3">
-                            <input type="checkbox" id="deliveries" class="toggle" checked>
-                            <label for="deliveries">Enable Delivery Service</label>
-                        </div>
-
-                        <div class="mt-6">
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
-                        </div>
-                    </form>
+                <!-- Page Header -->
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2 uppercase tracking-tight">System Configuration</h1>
+                        <p class="text-tertiary max-w-2xl">
+                            Manage global store settings, currencies, and API integrations. Changes reflect across all
+                            platforms instantly.
+                        </p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="button" class="btn btn-secondary">Reset to Default</button>
+                        <button type="submit" form="settingsForm" class="btn btn-primary">Save Changes</button>
+                    </div>
                 </div>
+
+                <form id="settingsForm" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                    <!-- General Settings -->
+                    <div class="content-card">
+                        <div class="card-header border-none mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="stat-icon-box">
+                                    <i data-lucide="store" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="text-xl font-bold uppercase tracking-wide">General Settings</h3>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="form-group">
+                                <label class="input-label">Store Name</label>
+                                <input type="text" class="input" value="HustlerShop Global">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="input-label">Store Logo</label>
+                                <div
+                                    class="upload-zone p-8 flex flex-col items-center justify-center border-dashed border-2 border-medium rounded-xl text-center cursor-pointer hover:bg-tertiary transition-colors">
+                                    <div
+                                        class="w-16 h-16 bg-tertiary rounded-xl flex items-center justify-center mb-4 border border-light">
+                                        <i data-lucide="shopping-bag" class="w-8 h-8 opacity-50"></i>
+                                    </div>
+                                    <i data-lucide="upload" class="w-5 h-5 mb-2"></i>
+                                    <p class="text-sm font-medium"><span class="text-primary">Click to upload</span> or
+                                        drag and drop</p>
+                                    <p class="text-xs text-tertiary mt-1">PNG, JPG or SVG (max. 2MB)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Currency & Localization -->
+                    <div class="content-card">
+                        <div class="card-header border-none mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="stat-icon-box">
+                                    <i data-lucide="banknote" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="text-xl font-bold uppercase tracking-wide">Currency &amp; Localization</h3>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div
+                                class="flex justify-between items-center p-4 bg-secondary rounded-xl border border-light">
+                                <div>
+                                    <p class="font-bold text-sm">Use Mozambican Metical (MZN)</p>
+                                    <p class="text-xs text-tertiary">Enable local currency for customer payments.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="input-label">Base Currency</label>
+                                <select class="select">
+                                    <option value="MZN">MZN - Mozambican Metical</option>
+                                    <option value="USD">USD - US Dollar</option>
+                                    <option value="EUR">EUR - Euro</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="input-label">Timezone</label>
+                                <select class="select">
+                                    <option value="CAT">(GMT+02:00) Maputo, Africa</option>
+                                    <option value="UTC">(GMT+00:00) UTC</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Theme & Appearance -->
+                    <div class="content-card">
+                        <div class="card-header border-none mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="stat-icon-box">
+                                    <i data-lucide="palette" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="text-xl font-bold uppercase tracking-wide">Theme &amp; Appearance</h3>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div
+                                class="flex justify-between items-center p-4 bg-secondary rounded-xl border border-light">
+                                <div>
+                                    <p class="font-bold text-sm">Force Dark Mode</p>
+                                    <p class="text-xs text-tertiary">Keep the admin UI in dark mode regardless of OS
+                                        settings.</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div
+                                    class="p-4 border-2 border-primary rounded-xl cursor-pointer bg-secondary relative">
+                                    <i data-lucide="moon" class="w-5 h-5 mb-2"></i>
+                                    <p class="font-bold text-sm">Dark Theme</p>
+                                    <i data-lucide="check-circle-2"
+                                        class="w-4 h-4 absolute top-2 right-2 text-primary"></i>
+                                </div>
+                                <div
+                                    class="p-4 border-2 border-light rounded-xl cursor-pointer hover:bg-tertiary transition-colors">
+                                    <i data-lucide="sun" class="w-5 h-5 mb-2"></i>
+                                    <p class="font-bold text-sm">Light Theme</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- API Integrations -->
+                    <div class="content-card">
+                        <div class="card-header border-none mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="stat-icon-box">
+                                    <i data-lucide="cpu" class="w-5 h-5"></i>
+                                </div>
+                                <h3 class="text-xl font-bold uppercase tracking-wide">API Integrations</h3>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="form-group">
+                                <label class="input-label">Supabase URL</label>
+                                <div class="relative">
+                                    <input type="text" class="input pr-12"
+                                        value="https://jxekugcmqqugoafujdap.supabase.co" readonly>
+                                    <button type="button" aria-label="Copy URL"
+                                        class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-tertiary hover:text-primary">
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="input-label">Supabase Anon Key</label>
+                                <div class="relative">
+                                    <input type="password" class="input pr-20" value="eyJh...very-long-key" readonly>
+                                    <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                                        <button type="button" aria-label="Toggle visibility"
+                                            class="p-2 text-tertiary hover:text-primary">
+                                            <i data-lucide="eye" class="w-4 h-4"></i>
+                                        </button>
+                                        <button type="button" aria-label="Copy key"
+                                            class="p-2 text-tertiary hover:text-primary">
+                                            <i data-lucide="copy" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-tertiary mt-2 flex items-center gap-1">
+                                    <i data-lucide="alert-triangle" class="w-3 h-3"></i>
+                                    This key is public. Use Service Role for backend tasks.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
             </div>
         </main>
     </div>
+    <script>lucide.createIcons();</script>
     <script type="module" src="../assets/js/admin/common.js"></script>
 </body>
 

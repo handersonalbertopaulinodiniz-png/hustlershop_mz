@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -8,47 +8,74 @@
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body class="admin-body">
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="HustlerShop" width="32" height="32">
-                <span class="font-bold text-lg">HustlerShop</span>
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i data-lucide="shopping-bag"></i>
+                    </div>
+                    <span class="logo-text">HustlerShop</span>
+                </div>
             </div>
 
             <nav class="sidebar-content">
                 <div class="sidebar-nav">
                     <a href="dashboard.html" class="nav-item">
-                        <span>📊</span>
+                        <i data-lucide="layout-dashboard"></i>
                         <span>Dashboard</span>
                     </a>
                     <a href="products.html" class="nav-item">
-                        <span>📦</span>
-                        <span>Products</span>
+                        <i data-lucide="package"></i>
+                        <span>Inventory</span>
                     </a>
                     <a href="users.html" class="nav-item active">
-                        <span>👥</span>
+                        <i data-lucide="users"></i>
                         <span>Users</span>
                     </a>
                     <a href="orders.html" class="nav-item">
-                        <span>🛍️</span>
+                        <i data-lucide="shopping-cart"></i>
                         <span>Orders</span>
                     </a>
+                    <a href="approvals.html" class="nav-item">
+                        <i data-lucide="check-circle-2"></i>
+                        <span>Approvals</span>
+                        <span class="badge">12</span>
+                    </a>
+                    <a href="earnings.html" class="nav-item">
+                        <i data-lucide="wallet"></i>
+                        <span>Earnings</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-footer-nav">
                     <a href="settings.html" class="nav-item">
-                        <span>⚙️</span>
+                        <i data-lucide="settings"></i>
                         <span>Settings</span>
                     </a>
+                    <button id="logoutBtn" type="button"
+                        class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                    </button>
                 </div>
             </nav>
 
             <div class="sidebar-footer">
-                <button type="button" id="logoutBtn" class="btn btn-ghost w-full justify-start gap-3">
-                    <span>🚪</span>
-                    <span>Logout</span>
-                </button>
+                <div class="user-profile-mini">
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=000&color=fff" alt="Admin">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">Alex Rivera</span>
+                        <span class="user-role">Super Admin</span>
+                    </div>
+                </div>
             </div>
         </aside>
 
@@ -57,33 +84,13 @@
             <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
-                    <button type="button" class="btn btn-ghost btn-icon lg:hidden" id="sidebarToggle">
-                        ☰
-                    </button>
-                    <h2 class="text-xl font-bold m-0">User Management</h2>
+                    <h2 class="text-xl font-bold m-0 uppercase tracking-tight">Users</h2>
                 </div>
 
                 <div class="topbar-right">
-                    <button type="button" class="btn btn-ghost btn-icon relative" data-notifications-toggle>
-                        🔔
-                        <span class="absolute top-0 right-0 bg-error text-white text-xs rounded-full px-1 hidden"
-                            data-notification-badge>0</span>
+                    <button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle theme">
+                        <i data-lucide="sun"></i>
                     </button>
-
-                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
-                        <span class="theme-icon">🌙</span>
-                    </button>
-
-                    <div class="relative">
-                        <button type="button"
-                            class="flex items-center gap-2 cursor-pointer hover:bg-tertiary p-2 rounded-md transition"
-                            data-user-menu-toggle>
-                            <span
-                                class="w-8 h-8 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center font-bold text-sm"
-                                data-user-avatar>AD</span>
-                            <span class="text-sm font-medium hidden md:block" data-user-name>Admin User</span>
-                        </button>
-                    </div>
                 </div>
             </header>
 
@@ -91,45 +98,49 @@
             <div class="page-content">
                 <div class="flex justify-between items-center mb-6">
                     <div class="flex gap-4">
-                        <div class="input-group m-0">
-                            <input type="text" class="input" placeholder="Search users...">
+                        <div class="search-container">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="userSearch" placeholder="Search users...">
                         </div>
-                        <select class="select w-auto">
+                        <select class="select-premium" id="roleFilter">
                             <option value="">All Roles</option>
                             <option value="customer">Customer</option>
                             <option value="delivery">Delivery</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" class="btn-primary-premium" id="addUserBtn">
                         + Add User
                     </button>
                 </div>
 
-                <div class="card overflow-hidden p-0">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-surface border-b">
-                            <tr>
-                                <th class="p-4 font-medium text-secondary">User</th>
-                                <th class="p-4 font-medium text-secondary">Role</th>
-                                <th class="p-4 font-medium text-secondary">Email</th>
-                                <th class="p-4 font-medium text-secondary">Status</th>
-                                <th class="p-4 font-medium text-secondary">Joined</th>
-                                <th class="p-4 font-medium text-secondary text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Data loaded via JS -->
-                        </tbody>
-                    </table>
-                    <div class="p-4 border-t text-center text-secondary text-sm" id="showingCount">
-                        Loading...
+                <div class="content-card">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Role</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Joined</th>
+                                    <th scope="col" class="text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Data loaded via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 border-t border-zinc-800 text-center text-zinc-500 text-sm" id="showingCount">
+                        Loading users...
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
+    <script>lucide.createIcons();</script>
     <script type="module" src="../assets/js/admin/users.js"></script>
 </body>
 

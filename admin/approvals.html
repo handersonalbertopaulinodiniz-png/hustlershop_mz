@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders - HustlerShop Admin</title>
+    <title>Approvals - HustlerShop Admin</title>
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
@@ -38,11 +38,11 @@
                         <i data-lucide="users"></i>
                         <span>Users</span>
                     </a>
-                    <a href="orders.html" class="nav-item active">
+                    <a href="orders.html" class="nav-item">
                         <i data-lucide="shopping-cart"></i>
                         <span>Orders</span>
                     </a>
-                    <a href="approvals.html" class="nav-item">
+                    <a href="approvals.html" class="nav-item active">
                         <i data-lucide="check-circle-2"></i>
                         <span>Approvals</span>
                         <span class="badge">12</span>
@@ -79,10 +79,11 @@
             </div>
         </aside>
 
+        <!-- Main Content -->
         <main class="main-content">
             <header class="topbar">
                 <div class="topbar-left">
-                    <h2 class="text-xl font-bold m-0 uppercase tracking-tight">Orders</h2>
+                    <h2 class="text-xl font-bold m-0 uppercase tracking-tight">Approvals</h2>
                 </div>
                 <div class="topbar-right">
                     <button type="button" class="icon-btn theme-toggle" data-theme-toggle aria-label="Toggle theme">
@@ -95,8 +96,8 @@
                 <div class="content-card">
                     <div class="card-header border-none">
                         <div class="header-title">
-                            <h3>All Orders</h3>
-                            <p>Manage and track your store orders</p>
+                            <h3>Pending Approvals</h3>
+                            <p>Verify and approve new delivery partners and sellers</p>
                         </div>
                     </div>
 
@@ -104,21 +105,19 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr>
-                                    <th scope="col">Order ID</th>
-                                    <th scope="col">Customer</th>
-                                    <th scope="col">Total</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Request Type</th>
+                                    <th scope="col">Document</th>
                                     <th scope="col">Date</th>
                                     <th scope="col" class="text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="ordersTableBody">
-                                <!-- Dynamic Content -->
+                            <tbody id="approvalsTableBody">
                                 <tr>
-                                    <td colspan="6" class="p-8 text-center text-zinc-500">
+                                    <td colspan="5" class="p-8 text-center text-zinc-500">
                                         <div class="flex flex-col items-center gap-2">
-                                            <i data-lucide="loader-2" class="animate-spin"></i>
-                                            <span>Loading orders...</span>
+                                            <i data-lucide="info" class="w-8 h-8 opacity-20"></i>
+                                            <span>No pending approvals found</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -130,7 +129,7 @@
         </main>
     </div>
     <script>lucide.createIcons();</script>
-    <script type="module" src="../assets/js/admin/orders.js"></script>
+    <script type="module" src="../assets/js/admin/common.js"></script>
 </body>
 
 </html>
