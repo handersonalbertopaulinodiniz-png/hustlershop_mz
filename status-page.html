@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status do Sistema - Hustlershop</title>
+    <meta name="description" content="Status do sistema Hustlershop - Monitoramento em tempo real">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="assets/images/logo.png" type="image/x-icon">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Estilos específicos para status page */
+        .status-header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .status-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all var(--transition-base);
+        }
+        
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-operational {
+            background-color: var(--color-success);
+            box-shadow: 0 0 8px var(--color-success);
+        }
+        
+        .status-degraded {
+            background-color: var(--color-warning);
+            box-shadow: 0 0 8px var(--color-warning);
+        }
+        
+        .status-outage {
+            background-color: var(--color-error);
+            box-shadow: 0 0 8px var(--color-error);
+        }
+        
+        .status-maintenance {
+            background-color: var(--color-primary);
+            box-shadow: 0 0 8px var(--color-primary);
+        }
+        
+        .status-timeline {
+            border-left: 2px solid var(--color-border);
+            padding-left: 1.5rem;
+            margin-left: 0.5rem;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.7rem;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--color-primary);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            color: var(--color-text-light);
+            font-size: 0.9rem;
+        }
+        
+        .uptime-chart {
+            height: 200px;
+            background: var(--color-surface-alt);
+            border-radius: var(--border-radius-md);
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .uptime-bar {
+            height: 100%;
+            background: var(--color-success);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .incident-card {
+            border-left: 4px solid var(--color-error);
+            background: var(--color-error-light);
+        }
+        
+        .update-card {
+            border-left: 4px solid var(--color-info);
+            background: var(--color-info-light);
+        }
+        
+        .component-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .component-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .component-item:last-child {
+            border-bottom: none;
+        }
+        
+        .component-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-badge-operational {
+            background: var(--color-success-light);
+            color: var(--color-success-dark);
+        }
+        
+        .status-badge-degraded {
+            background: var(--color-warning-light);
+            color: var(--color-warning-dark);
+        }
+        
+        .status-badge-outage {
+            background: var(--color-error-light);
+            color: var(--color-error-dark);
+        }
+        
+        .status-badge-maintenance {
+            background: var(--color-info-light);
+            color: var(--color-info-dark);
+        }
+        
+        .refresh-btn {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+        
+        .refresh-btn:hover {
+            background: var(--color-primary-dark);
+        }
+        
+        .refresh-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+        
+        .last-updated {
+            color: var(--color-text-light);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+        
+        .subscription-form {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius-md);
+            background: var(--color-surface-alt);
+            color: var(--color-text);
+        }
+        
+        .dark .form-input {
+            background: var(--color-surface);
+            border-color: var(--color-border);
+        }
+        
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-timeline {
+                padding-left: 1rem;
+                margin-left: 0.25rem;
+            }
+            
+            .timeline-item::before {
+                left: -1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Status Header -->
+    <div class="status-header">
+        <div class="container">
+            <div class="flex items-center justify-between">
+                <div>
+                    <a href="index.html" class="flex items-center gap-3 mb-4">
+                        <img src="assets/images/logo.png" alt="Hustlershop Logo" width="40" height="40" class="rounded-lg">
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">Hustlershop</h1>
+                            <p class="text-sm opacity-90">Status do Sistema</p>
+                        </div>
+                    </a>
+                    <h2 class="text-3xl font-bold mb-2">Monitoramento em Tempo Real</h2>
+                    <p class="opacity-90">Status atual de todos os sistemas e serviços da Hustlershop</p>
+                </div>
+                <div class="hidden md:block">
+                    <div class="text-center bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                        <div class="text-sm opacity-90">Status Geral</div>
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="status-indicator status-operational"></span>
+                            <span class="text-xl font-bold">Operacional</span>
+                        </div>
+                        <div class="text-sm mt-1">Atualizado agora</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- System Status Overview -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <!-- Current Status -->
+            <div class="status-card">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold">Status do Sistema</h3>
+                    <button id="refresh-btn" class="refresh-btn">
+                        <i class="fas fa-sync-alt mr-2"></i>Atualizar
+                    </button>
+                </div>
+
+                <div class="flex items-center mb-4">
+                    <span class="status-indicator status-operational mr-3"></span>
+                    <div>
+                        <div class="text-2xl font-bold">Todos os sistemas operacionais</div>
+                        <div class="text-text-light">Última verificação: <span id="last-checked">Agora</span></div>
+                    </div>
+                </div>
+
+                <div class="uptime-chart">
+                    <div class="uptime-bar" style="width: 99.9%"></div>
+                </div>
+                <div class="flex justify-between text-sm text-text-light mt-2">
+                    <span>Uptime 30 dias: 99.9%</span>
+                    <span>Uptime 24h: 100%</span>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="status-card">
+                <h3 class="text-xl font-bold mb-4">Métricas Principais</h3>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="response-time">120ms</div>
+                        <div class="metric-label">Tempo de Resposta</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="users-online">1.2K</div>
+                        <div class="metric-label">Usuários Online</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="orders-today">48</div>
+                        <div class="metric-label">Pedidos Hoje</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="api-requests">4.5K</div>
+                        <div class="metric-label">Requisições API</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Components -->
+        <div class="status-card mb-8">
+            <h3 class="text-xl font-bold mb-4">Componentes do Sistema</h3>
+            <div id="components-loading" class="loading-indicator">
+                <div class="loading-spinner"></div>
+            </div>
+            <ul id="components-list" class="component-list hidden">
+                <!-- Components will be loaded here -->
+            </ul>
+        </div>
+
+        <!-- Recent Incidents & Updates -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <!-- Recent Incidents -->
+            <div>
+                <h3 class="text-xl font-bold mb-4">Incidentes Recentes</h3>
+                <div id="incidents-loading" class="loading-indicator">
+                    <div class="loading-spinner"></div>
+                </div>
+                <div id="incidents-list" class="space-y-4 hidden">
+                    <!-- Incidents will be loaded here -->
+                </div>
+                <div id="no-incidents" class="text-center py-8 text-text-light hidden">
+                    <i class="fas fa-check-circle text-4xl text-success mb-4"></i>
+                    <p>Nenhum incidente reportado nas últimas 24 horas</p>
+                </div>
+            </div>
+
+            <!-- System Updates -->
+            <div>
+                <h3 class="text-xl font-bold mb-4">Atualizações do Sistema</h3>
+                <div id="updates-loading" class="loading-indicator">
+                    <div class="loading-spinner"></div>
+                </div>
+                <div id="updates-list" class="space-y-4 hidden">
+                    <!-- Updates will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Timeline -->
+        <div class="status-card mb-8">
+            <h3 class="text-xl font-bold mb-4">Histórico de Status (Últimas 24h)</h3>
+            <div class="status-timeline" id="timeline">
+                <!-- Timeline items will be loaded here -->
+            </div>
+            <div id="timeline-loading" class="loading-indicator">
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+
+        <!-- Subscription -->
+        <div class="subscription-form">
+            <h3 class="text-xl font-bold mb-4">Receba Atualizações de Status</h3>
+            <p class="text-text-light mb-6">Inscreva-se para receber notificações sobre mudanças no status do sistema</p>
+
+            <form id="subscribe-form">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" class="form-input" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-label">Notificar sobre:</div>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="notifications" value="incidents" checked class="mr-2">
+                            <span>Incidentes críticos</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="notifications" value="maintenance" checked class="mr-2">
+                            <span>Manutenções programadas</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="notifications" value="updates" class="mr-2">
+                            <span>Atualizações do sistema</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="notifications" value="resolved" class="mr-2">
+                            <span>Problemas resolvidos</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full">
+                    <i class="fas fa-bell mr-2"></i>Inscrever-se
+                </button>
+            </form>
+
+            <div id="subscribe-success" class="hidden mt-4 p-4 bg-success-light border border-success rounded-lg">
+                <i class="fas fa-check-circle text-success mr-2"></i>
+                <span>Inscrição realizada com sucesso!</span>
+            </div>
+
+            <div id="subscribe-error" class="hidden mt-4 p-4 bg-error-light border border-error rounded-lg">
+                <i class="fas fa-exclamation-circle text-error mr-2"></i>
+                <span id="error-message">Ocorreu um erro. Tente novamente.</span>
+            </div>
+        </div>
+
+        <!-- Footer Navigation -->
+        <div class="flex flex-wrap justify-between items-center py-8 border-t border-border mt-8">
+            <div class="text-text-light text-sm">
+                <p>© 2024 Hustlershop. Todos os direitos reservados.</p>
+                <p class="mt-1">Última atualização da página: <span id="page-last-updated">Carregando...</span></p>
+            </div>
+            <div class="flex gap-4 mt-4 md:mt-0">
+                <a href="index.html" class="btn btn-outline">
+                    <i class="fas fa-home mr-2"></i>Voltar ao Site
+                </a>
+                <a href="support/chat.html" class="btn btn-primary">
+                    <i class="fas fa-headset mr-2"></i>Suporte
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main Script -->
+    <script>
+        // Dados simulados para o status page
+        const systemComponents = [
+            { name: 'Site Principal', status: 'operational', description: 'Página inicial e catálogo' },
+            { name: 'Sistema de Pagamentos', status: 'operational', description: 'Processamento de transações' },
+            { name: 'API de Produtos', status: 'operational', description: 'Gestão de produtos e estoque' },
+            { name: 'Sistema de Entregas', status: 'operational', description: 'Rastreamento e logística' },
+            { name: 'Painel Administrativo', status: 'operational', description: 'Área do proprietário' },
+            { name: 'Banco de Dados', status: 'operational', description: 'Armazenamento de dados' },
+            { name: 'Servidor de Email', status: 'operational', description: 'Notificações e comunicações' },
+            { name: 'CDN e Cache', status: 'operational', description: 'Distribuição de conteúdo' }
+        ];
+
+        const recentIncidents = [
+            {
+                id: 1,
+                title: 'Manutenção Programada - Banco de Dados',
+                description: 'Atualização de segurança no banco de dados principal',
+                status: 'resolved',
+                date: '2024-03-15 02:00',
+                duration: '2 horas',
+                impact: 'low'
+            },
+            {
+                id: 2,
+                title: 'Alta Latência no Sistema de Pagamentos',
+                description: 'Problema temporário com processamento de pagamentos',
+                status: 'resolved',
+                date: '2024-03-14 14:30',
+                duration: '45 minutos',
+                impact: 'medium'
+            }
+        ];
+
+        const systemUpdates = [
+            {
+                id: 1,
+                title: 'Nova Funcionalidade: Rastreamento em Tempo Real',
+                description: 'Implementado sistema de rastreamento de entregas com atualizações em tempo real',
+                date: '2024-03-16',
+                type: 'feature'
+            },
+            {
+                id: 2,
+                title: 'Otimização de Performance',
+                description: 'Melhorias no carregamento de páginas e tempo de resposta',
+                date: '2024-03-15',
+                type: 'improvement'
+            },
+            {
+                id: 3,
+                title: 'Correção de Segurança',
+                description: 'Patch de segurança aplicado no sistema de autenticação',
+                date: '2024-03-14',
+                type: 'security'
+            }
+        ];
+
+        const statusTimeline = [
+            { time: '00:00', status: 'operational', note: 'Todos os sistemas operando normalmente' },
+            { time: '02:00', status: 'maintenance', note: 'Manutenção programada no banco de dados' },
+            { time: '04:00', status: 'operational', note: 'Manutenção concluída com sucesso' },
+            { time: '14:30', status: 'degraded', note: 'Alta latência no processamento de pagamentos' },
+            { time: '15:15', status: 'operational', note: 'Problema de latência resolvido' },
+            { time: '18:00', status: 'operational', note: 'Pico de acessos - Sistema estável' },
+            { time: '22:00', status: 'operational', note: 'Performance normal durante a noite' }
+        ];
+
+        // Formatar data
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-MZ', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Formatar tempo relativo
+        function formatRelativeTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            
+            if (diffMins < 1) return 'Agora mesmo';
+            if (diffMins < 60) return `Há ${diffMins} minuto${diffMins !== 1 ? 's' : ''}`;
+            if (diffHours < 24) return `Há ${diffHours} hora${diffHours !== 1 ? 's' : ''}`;
+            
+            return formatDate(dateString);
+        }
+
+        // Carregar componentes do sistema
+        function loadComponents() {
+            const componentsList = document.getElementById('components-list');
+            const loading = document.getElementById('components-loading');
+            
+            if (!componentsList) return;
+            
+            componentsList.innerHTML = systemComponents.map(component => {
+                const statusClass = `status-badge-${component.status}`;
+                const statusText = {
+                    'operational': 'Operacional',
+                    'degraded': 'Degradado',
+                    'outage': 'Fora do Ar',
+                    'maintenance': 'Em Manutenção'
+                }[component.status] || 'Desconhecido';
+                
+                return `
+                    <li class="component-item">
+                        <div>
+                            <div class="font-semibold">${component.name}</div>
+                            <div class="text-sm text-text-light">${component.description}</div>
+                        </div>
+                        <span class="component-status ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </li>
+                `;
+            }).join('');
+            
+            loading.classList.add('hidden');
+            componentsList.classList.remove('hidden');
+        }
+
+        // Carregar incidentes
+        function loadIncidents() {
+            const incidentsList = document.getElementById('incidents-list');
+            const loading = document.getElementById('incidents-loading');
+            const noIncidents = document.getElementById('no-incidents');
+            
+            if (!incidentsList) return;
+            
+            if (recentIncidents.length === 0) {
+                loading.classList.add('hidden');
+                noIncidents.classList.remove('hidden');
+                return;
+            }
+            
+            incidentsList.innerHTML = recentIncidents.map(incident => {
+                const impactClass = incident.impact === 'high' ? 'bg-error-light border-error' :
+                                   incident.impact === 'medium' ? 'bg-warning-light border-warning' :
+                                   'bg-info-light border-info';
+                
+                return `
+                    <div class="incident-card p-4 rounded-lg ${impactClass}">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold">${incident.title}</h4>
+                            <span class="text-sm text-text-light">${formatDate(incident.date)}</span>
+                        </div>
+                        <p class="text-sm mb-2">${incident.description}</p>
+                        <div class="flex justify-between text-sm">
+                            <span><i class="fas fa-clock mr-1"></i>Duração: ${incident.duration}</span>
+                            <span class="font-semibold text-success">Resolvido</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            loading.classList.add('hidden');
+            incidentsList.classList.remove('hidden');
+        }
+
+        // Carregar atualizações
+        function loadUpdates() {
+            const updatesList = document.getElementById('updates-list');
+            const loading = document.getElementById('updates-loading');
+            
+            if (!updatesList) return;
+            
+            updatesList.innerHTML = systemUpdates.map(update => {
+                const typeIcon = update.type === 'feature' ? 'fas fa-star' :
+                                update.type === 'improvement' ? 'fas fa-chart-line' :
+                                'fas fa-shield-alt';
+                
+                const typeColor = update.type === 'feature' ? 'text-primary' :
+                                 update.type === 'improvement' ? 'text-success' :
+                                 'text-warning';
+                
+                return `
+                    <div class="update-card p-4 rounded-lg">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold">${update.title}</h4>
+                            <span class="text-sm text-text-light">${update.date}</span>
+                        </div>
+                        <p class="text-sm mb-2">${update.description}</p>
+                        <div class="flex items-center text-sm ${typeColor}">
+                            <i class="${typeIcon} mr-2"></i>
+                            <span>${update.type === 'feature' ? 'Nova Funcionalidade' : 
+                                   update.type === 'improvement' ? 'Melhoria' : 
+                                   'Segurança'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            loading.classList.add('hidden');
+            updatesList.classList.remove('hidden');
+        }
+
+        // Carregar timeline
+        function loadTimeline() {
+            const timeline = document.getElementById('timeline');
+            const loading = document.getElementById('timeline-loading');
+            
+            if (!timeline) return;
+            
+            timeline.innerHTML = statusTimeline.map(item => {
+                const statusText = {
+                    'operational': 'Operacional',
+                    'degraded': 'Degradado',
+                    'outage': 'Fora do Ar',
+                    'maintenance': 'Manutenção'
+                }[item.status] || 'Desconhecido';
+                
+                const statusColor = {
+                    'operational': 'text-success',
+                    'degraded': 'text-warning',
+                    'outage': 'text-error',
+                    'maintenance': 'text-primary'
+                }[item.status] || 'text-text-light';
+                
+                return `
+                    <div class="timeline-item">
+                        <div class="flex justify-between mb-1">
+                            <span class="font-semibold ${statusColor}">${statusText}</span>
+                            <span class="text-text-light">${item.time}</span>
+                        </div>
+                        <p class="text-sm text-text-light">${item.note}</p>
+                    </div>
+                `;
+            }).join('');
+            
+            loading.classList.add('hidden');
+        }
+
+        // Atualizar métricas dinâmicas
+        function updateMetrics() {
+            // Tempo de resposta aleatório entre 80-150ms
+            const responseTime = Math.floor(Math.random() * 70) + 80;
+            document.getElementById('response-time').textContent = `${responseTime}ms`;
+            
+            // Usuários online aleatório entre 1K-2K
+            const usersOnline = (Math.random() * 1000 + 1000).toFixed(1);
+            document.getElementById('users-online').textContent = `${usersOnline}K`;
+            
+            // Pedidos hoje (base + aleatório)
+            const ordersToday = Math.floor(Math.random() * 30) + 40;
+            document.getElementById('orders-today').textContent = ordersToday;
+            
+            // Requisições API
+            const apiRequests = (Math.random() * 2000 + 4000).toFixed(1);
+            document.getElementById('api-requests').textContent = `${apiRequests}K`;
+            
+            // Atualizar timestamp
+            const now = new Date();
+            document.getElementById('last-checked').textContent = formatRelativeTime(now);
+            document.getElementById('page-last-updated').textContent = now.toLocaleTimeString('pt-MZ');
+        }
+
+        // Mostrar toast notification
+        function showToast({ type = 'info', title, message }) {
+            const toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast-hustler toast-hustler-${type} slide-in-right`;
+            toast.innerHTML = `
+                <div class="toast-hustler-icon">
+                    ${type === 'success' ? '<i class="fas fa-check-circle"></i>' :
+                      type === 'error' ? '<i class="fas fa-exclamation-circle"></i>' :
+                      type === 'warning' ? '<i class="fas fa-exclamation-triangle"></i>' :
+                      '<i class="fas fa-info-circle"></i>'}
+                </div>
+                <div class="toast-hustler-content">
+                    <div class="toast-hustler-title">${title}</div>
+                    <div class="toast-hustler-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+
+        // Função para atualizar tudo
+        function refreshAllData() {
+            const refreshBtn = document.getElementById('refresh-btn');
+            if (refreshBtn.disabled) return;
+            
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Atualizando...';
+            
+            // Simular carga de dados
+            setTimeout(() => {
+                updateMetrics();
+                loadComponents();
+                loadIncidents();
+                loadUpdates();
+                loadTimeline();
+                
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>Atualizar';
+                
+                showToast({
+                    type: 'success',
+                    title: 'Status Atualizado',
+                    message: 'Dados do sistema atualizados com sucesso'
+                });
+            }, 1000);
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Carregar dados iniciais
+            updateMetrics();
+            loadComponents();
+            loadIncidents();
+            loadUpdates();
+            loadTimeline();
+            
+            // Configurar botão de refresh
+            const refreshBtn = document.getElementById('refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', refreshAllData);
+            }
+            
+            // Configurar auto-refresh a cada 60 segundos
+            setInterval(updateMetrics, 60000);
+            
+            // Configurar formulário de inscrição
+            const subscribeForm = document.getElementById('subscribe-form');
+            const successMsg = document.getElementById('subscribe-success');
+            const errorMsg = document.getElementById('subscribe-error');
+            
+            if (subscribeForm) {
+                subscribeForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('email').value;
+                    const checkboxes = this.querySelectorAll('input[name="notifications"]:checked');
+                    const notifications = Array.from(checkboxes).map(cb => cb.value);
+                    
+                    // Simular envio
+                    const success = Math.random() > 0.2; // 80% de chance de sucesso
+                    
+                    if (success) {
+                        successMsg.classList.remove('hidden');
+                        errorMsg.classList.add('hidden');
+                        this.reset();
+                        
+                        showToast({
+                            type: 'success',
+                            title: 'Inscrição Realizada',
+                            message: 'Você receberá atualizações de status por email'
+                        });
+                        
+                        setTimeout(() => {
+                            successMsg.classList.add('hidden');
+                        }, 5000);
+                    } else {
+                        errorMsg.classList.remove('hidden');
+                        successMsg.classList.add('hidden');
+                        
+                        showToast({
+                            type: 'error',
+                            title: 'Erro na Inscrição',
+                            message: 'Por favor, tente novamente mais tarde'
+                        });
+                    }
+                });
+            }
+            
+            // Adicionar data/hora inicial
+            document.getElementById('page-last-updated').textContent = 
+                new Date().toLocaleTimeString('pt-MZ');
+        });
+    </script>
+</body>
+</html>
