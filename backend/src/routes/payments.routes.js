@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const supabase = require('../config/database');
+const { databases, databaseId } = require('../config/appwrite');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 
@@ -15,13 +15,9 @@ router.post('/intent', auth, async (req, res) => {
 
     try {
         // 1. Verificar se o pedido existe
-        const { data: order, error: orderError } = await supabase
-            .from('orders')
-            .select('id, status')
-            .eq('id', order_id)
-            .single();
+        const order = await databases.getDocument(databaseId, 'orders', order_id);
 
-        if (orderError || !order) {
+        if (!order) {
             return res.status(404).json({ success: false, message: 'Pedido não encontrado.' });
         }
 
@@ -37,10 +33,10 @@ router.post('/intent', auth, async (req, res) => {
         };
 
         // 3. Atualizar o status de pagamento do pedido para 'processing'
-        await supabase
-            .from('orders')
-            .update({ payment_status: 'pending' })
-            .eq('id', order_id);
+        await databases.updateDocument(databaseId, 'orders', order_id, {
+            payment_status: 'pending',
+            updated_at: new Date().toISOString()
+        });
 
         res.json({
             success: true,
@@ -58,14 +54,10 @@ router.post('/status', auth, async (req, res) => {
     const { order_id, status } = req.body; // status: completed, failed
 
     try {
-        const { data: order, error } = await supabase
-            .from('orders')
-            .update({ payment_status: status })
-            .eq('id', order_id)
-            .select()
-            .single();
-
-        if (error) throw error;
+        const order = await databases.updateDocument(databaseId, 'orders', order_id, {
+            payment_status: status,
+            updated_at: new Date().toISOString()
+        });
 
         res.json({
             success: true,

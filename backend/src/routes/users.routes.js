@@ -1,19 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const supabase = require('../config/database');
+const { databases, Query, databaseId } = require('../config/appwrite');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 
 // GET /users (Admin Only)
 router.get('/', auth, admin, async (req, res) => {
     try {
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .order('created_at', { ascending: false });
+        const result = await databases.listDocuments(databaseId, 'profiles', [
+            Query.orderDesc('created_at')
+        ]);
 
-        if (error) throw error;
-        res.json({ success: true, count: data.length, users: data });
+        res.json({ success: true, count: result.total, users: result.documents });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -24,13 +22,7 @@ router.delete('/:id', auth, admin, async (req, res) => {
     const { id } = req.params;
 
     try {
-        // Note: Deleting from profiles is easy, but deleting from Supabase Auth requires Admin API
-        const { error } = await supabase
-            .from('profiles')
-            .delete()
-            .eq('id', id);
-
-        if (error) throw error;
+        await databases.deleteDocument(databaseId, 'profiles', id);
         res.json({ success: true, message: 'Perfil do usuário excluído com sucesso.' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

@@ -1,19 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const supabase = require('../config/database');
+const { databases, Query, databaseId, ID } = require('../config/appwrite');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 
 // GET /products (Public)
 router.get('/', async (req, res) => {
     try {
-        const { data, error } = await supabase
-            .from('products')
-            .select('*')
-            .eq('is_active', true);
+        const result = await databases.listDocuments(databaseId, 'products', [
+            Query.equal('is_active', true)
+        ]);
 
-        if (error) throw error;
-        res.json({ success: true, count: data.length, products: data });
+        res.json({ success: true, count: result.total, products: result.documents });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -24,13 +22,18 @@ router.post('/', auth, admin, async (req, res) => {
     const { name, description, price, stock_quantity, category_id, image_url } = req.body;
 
     try {
-        const { data, error } = await supabase
-            .from('products')
-            .insert([{ name, description, price, stock_quantity, category_id, image_url }])
-            .select();
+        const product = await databases.createDocument(databaseId, 'products', ID.unique(), {
+            name,
+            description,
+            price,
+            stock_quantity,
+            category_id,
+            image_url,
+            is_active: true,
+            created_at: new Date().toISOString()
+        });
 
-        if (error) throw error;
-        res.status(201).json({ success: true, message: 'Produto criado com sucesso', product: data[0] });
+        res.status(201).json({ success: true, message: 'Produto criado com sucesso', product });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -42,14 +45,12 @@ router.put('/:id', auth, admin, async (req, res) => {
     const updates = req.body;
 
     try {
-        const { data, error } = await supabase
-            .from('products')
-            .update(updates)
-            .eq('id', id)
-            .select();
+        const product = await databases.updateDocument(databaseId, 'products', id, {
+            ...updates,
+            updated_at: new Date().toISOString()
+        });
 
-        if (error) throw error;
-        res.json({ success: true, message: 'Produto atualizado', product: data[0] });
+        res.json({ success: true, message: 'Produto atualizado', product });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -60,12 +61,7 @@ router.delete('/:id', auth, admin, async (req, res) => {
     const { id } = req.params;
 
     try {
-        const { error } = await supabase
-            .from('products')
-            .delete()
-            .eq('id', id);
-
-        if (error) throw error;
+        await databases.deleteDocument(databaseId, 'products', id);
         res.json({ success: true, message: 'Produto excluído permanentemente' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
