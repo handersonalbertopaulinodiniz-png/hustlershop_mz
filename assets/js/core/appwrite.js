@@ -1,10 +1,10 @@
 // Appwrite Configuration and Client
 import { Client, Account, Databases, ID, Query } from 'https://cdn.jsdelivr.net/npm/appwrite@21.2.1/+esm';
 
-// Appwrite Configuration
-const APPWRITE_ENDPOINT = 'https://fra.cloud.appwrite.io/v1';
-const APPWRITE_PROJECT_ID = '696e35180026caf34a47';
-const APPWRITE_DATABASE_ID = 'hustlershop-db'; // Will be created if doesn't exist
+// Appwrite Configuration - Update these with your actual values
+const APPWRITE_ENDPOINT = process.env.APPWRITE_ENDPOINT || 'https://fra.cloud.appwrite.io/v1';
+const APPWRITE_PROJECT_ID = process.env.APPWRITE_PROJECT_ID || '696e35180026caf34a47';
+const APPWRITE_DATABASE_ID = process.env.APPWRITE_DATABASE_ID || 'hustlershop-db'; // Will be created if doesn't exist
 
 // Validate configuration
 if (!APPWRITE_ENDPOINT || !APPWRITE_PROJECT_ID) {

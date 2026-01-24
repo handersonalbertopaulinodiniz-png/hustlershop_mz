@@ -10,6 +10,7 @@
 @import './components.css';
 @import './animations.css';
 @import './dark-theme.css';
+@import './responsive.css';
 
 /* Base Styles */
 body {

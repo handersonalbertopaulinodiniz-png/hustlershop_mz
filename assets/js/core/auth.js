@@ -1,5 +1,5 @@
 // Authentication Module
-import { supabase, TABLES, ROLES, APPROVAL_STATUS } from './supabase.js';
+import { account, databases, COLLECTIONS, ROLES, APPROVAL_STATUS, appwriteHelpers, ID } from './appwrite.js';
 import { showToast } from '../components/toast.js';
 import { router } from './router.js';
 import { cart } from '../modules/cart.js';
@@ -66,37 +66,31 @@ export const hasRole = (role) => {
 export const initAuth = async () => {
     try {
         // Get current session
-        const { data: { session }, error } = await supabase.auth.getSession();
+        const session = await account.get();
 
-        if (error) throw error;
+        currentUser = session;
+        await loadUserProfile();
 
-        if (session) {
-            currentUser = session.user;
-            await loadUserProfile();
-        }
-
-        // Listen for auth changes
-        supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log('Auth state changed:', event);
-
-            if (event === 'SIGNED_IN') {
-                currentUser = session.user;
-                await loadUserProfile();
-                // Sincroniza o carrinho de convidado se houver
-                if (cart && cart.syncCart) {
-                    await cart.syncCart(currentUser.id);
+        // Listen for auth changes (Appwrite doesn't have built-in auth state change like Supabase)
+        // We'll use a different approach with periodic session checking
+        setInterval(async () => {
+            try {
+                const currentSession = await account.get();
+                if (!currentUser || currentSession.$id !== currentUser.$id) {
+                    currentUser = currentSession;
+                    await loadUserProfile();
                 }
-                handleAuthRedirect();
-            } else if (event === 'SIGNED_OUT') {
+            } catch (error) {
+                // Session expired
                 currentUser = null;
                 currentProfile = null;
-                router.navigate('/auth/login.html');
+                router.navigate('../auth/login.html');
             }
-        });
+        }, 60000); // Check every minute
 
         return true;
     } catch (error) {
-        console.error('Auth initialization error:', error);
+        console.log('No active session found');
         return false;
     }
 };
@@ -104,14 +98,15 @@ export const initAuth = async () => {
 // Load User Profile
 const loadUserProfile = async () => {
     try {
-        const { data, error } = await supabase
-            .from(TABLES.USERS)
-            .select('*')
-            .eq('id', currentUser.id)
-            .single();
+        const result = await appwriteHelpers.listDocuments(COLLECTIONS.USERS, [
+            appwriteHelpers.query.equal('user_id', currentUser.$id)
+        ]);
 
-        if (error) throw error;
+        if (!result.success || result.data.documents.length === 0) {
+            throw new Error('User profile not found');
+        }
 
+        const data = result.data.documents[0];
         currentProfile = data;
 
         // SECURITY: Store minimal data in localStorage
@@ -167,38 +162,32 @@ export const signUp = async (email, password, userData) => {
             throw new Error('Invalid role specified');
         }
 
-        // Create auth user
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-            email: email.toLowerCase().trim(),
+        // Create auth user with Appwrite
+        const authData = await account.create(
+            ID.unique(),
+            email.toLowerCase().trim(),
             password,
-            options: {
-                data: {
-                    full_name: sanitizedData.fullName,
-                    role: sanitizedData.role
-                }
-            }
+            sanitizedData.fullName
+        );
+
+        // Create user profile in database
+        const profileResult = await appwriteHelpers.createDocument(COLLECTIONS.USERS, {
+            user_id: authData.$id,
+            email: email.toLowerCase().trim(),
+            full_name: sanitizedData.fullName,
+            phone: sanitizedData.phone,
+            role: sanitizedData.role,
+            approval_status: sanitizedData.role === ROLES.CUSTOMER ? APPROVAL_STATUS.APPROVED : APPROVAL_STATUS.PENDING,
+            created_at: new Date().toISOString()
         });
 
-        if (authError) throw authError;
-
-        // Create user profile
-        const { error: profileError } = await supabase
-            .from(TABLES.USERS)
-            .insert({
-                id: authData.user.id,
-                email: email.toLowerCase().trim(),
-                full_name: sanitizedData.fullName,
-                phone: sanitizedData.phone,
-                role: sanitizedData.role,
-                approval_status: sanitizedData.role === ROLES.CUSTOMER ? APPROVAL_STATUS.APPROVED : APPROVAL_STATUS.PENDING,
-                created_at: new Date().toISOString()
-            });
-
-        if (profileError) throw profileError;
+        if (!profileResult.success) {
+            throw new Error(profileResult.error);
+        }
 
         showToast('Account created successfully! Please check your email for verification.', 'success');
 
-        return { success: true, user: authData.user };
+        return { success: true, user: authData };
     } catch (error) {
         console.error('Sign up error:', error);
         const errorMessage = error.message || 'Failed to create account';
@@ -219,14 +208,14 @@ export const signIn = async (email, password) => {
             throw new Error('Password is required');
         }
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email.toLowerCase().trim(),
+        // Create session with Appwrite
+        const session = await account.createEmailPasswordSession(
+            email.toLowerCase().trim(),
             password
-        });
+        );
 
-        if (error) throw error;
-
-        currentUser = data.user;
+        // Get current user
+        currentUser = await account.get();
         await loadUserProfile();
         
         // Start session timeout monitoring
@@ -249,7 +238,7 @@ export const signIn = async (email, password) => {
 
         // Final State Check
         const finalUserData = {
-            id: currentUser.id,
+            id: currentUser.$id,
             email: currentUser.email,
             role: currentProfile.role,
             full_name: currentProfile.full_name
@@ -277,9 +266,8 @@ export const signOut = async () => {
             sessionTimer = null;
         }
 
-        const { error } = await supabase.auth.signOut();
-
-        if (error) throw error;
+        // Delete all sessions with Appwrite
+        await account.deleteSessions();
 
         currentUser = null;
         currentProfile = null;

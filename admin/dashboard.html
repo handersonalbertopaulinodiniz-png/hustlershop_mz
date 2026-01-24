@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="../assets/css/admin.css">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Mobile Menu -->
+    <script src="../assets/js/core/mobile-menu.js"></script>
 </head>
 
 <body class="admin-body">
@@ -86,9 +88,6 @@
             <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
-                    <button type="button" class="sidebar-toggle" aria-label="Toggle menu">
-                        <i data-lucide="menu"></i>
-                    </button>
                     <div class="search-container">
                         <i data-lucide="search"></i>
                         <input type="text" placeholder="Search transactions, customers...">
@@ -112,7 +111,7 @@
             <!-- Page Content -->
             <div class="page-content">
                 <!-- Stats Grid -->
-                <div class="stats-grid">
+                <div class="stats-grid dashboard-grid">
                     <div class="stat-card">
                         <div class="stat-info">
                             <p class="stat-label">Total Sales</p>

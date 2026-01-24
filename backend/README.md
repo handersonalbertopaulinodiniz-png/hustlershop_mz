@@ -1,6 +1,6 @@
 # HustlerShop MZ - Backend API
 
-API REST premium desenvolvida com Node.js, Express e integração total com Supabase.
+API REST premium desenvolvida com Node.js, Express e integração total com Appwrite.
 
 ## 🚀 Como Executar
 
@@ -9,8 +9,8 @@ API REST premium desenvolvida com Node.js, Express e integração total com Supa
    ```bash
    npm install
    ```
-3. **Configuração**: Verifique o arquivo `.env` para garantir que a `SUPABASE_URL` e `SUPABASE_ANON_KEY` estão corretas.
-4. **Banco de Dados**: Aplique o script `supabase_schema.sql` no SQL Editor do seu dashboard Supabase.
+3. **Configuração**: Verifique o arquivo `.env` para garantir que as variáveis `APPWRITE_ENDPOINT`, `APPWRITE_PROJECT_ID`, `APPWRITE_API_KEY` e `APPWRITE_DATABASE_ID` estão corretas.
+4. **Banco de Dados**: Crie as Collections no Appwrite Database conforme o guia do projeto (ex.: `profiles`, `products`, `orders`, `order_items`).
 5. **Execução**:
    ```bash
    npm run dev
@@ -21,14 +21,13 @@ API REST premium desenvolvida com Node.js, Express e integração total com Supa
 - `src/app.js`: Ponto de entrada da aplicação.
 - `src/middleware/`: Filtros de autenticação, permissões admin e tratamento de erros.
 - `src/routes/`: Definição de endpoints para Auth, Produtos, Pedidos e Pagamentos.
-- `src/config/`: Configurações de conexão com Supabase.
+- `src/config/`: Configurações de conexão com Appwrite.
 
 ## 🔐 Segurança
 
 - **JWT**: Utilizado para proteger rotas e carregar a role do usuário.
 - **RBAC**: Middleware que diferencia Admin, Cliente e Entregadores.
-- **Bcrypt**: Criptografia de senhas antes de enviar ao Supabase.
-- **RLS**: Row Level Security configurado via SQL para proteção direta no banco.
+- **Bcrypt**: Criptografia de senhas antes de enviar ao backend.
 
 ## 📑 Endpoints Principais
 

@@ -1,160 +1,181 @@
 // API Module - Centralized API calls
-import { supabase, TABLES, handleSupabaseError } from './supabase.js';
+import { appwriteHelpers, COLLECTIONS } from './appwrite.js';
 
 // Generic CRUD Operations
 export const api = {
     // Get all records from a table
     getAll: async (table, options = {}) => {
         try {
-            let query = supabase.from(table).select(options.select || '*');
+            const queries = [];
 
             // Apply filters
             if (options.filters) {
                 Object.entries(options.filters).forEach(([key, value]) => {
-                    query = query.eq(key, value);
+                    queries.push(appwriteHelpers.query.equal(key, value));
                 });
             }
 
             // Apply ordering
             if (options.orderBy) {
-                query = query.order(options.orderBy.column, {
-                    ascending: options.orderBy.ascending !== false
-                });
+                if (options.orderBy.ascending !== false) {
+                    queries.push(appwriteHelpers.query.orderAsc(options.orderBy.column));
+                } else {
+                    queries.push(appwriteHelpers.query.orderDesc(options.orderBy.column));
+                }
             }
 
             // Apply limit
             if (options.limit) {
-                query = query.limit(options.limit);
+                queries.push(appwriteHelpers.query.limit(options.limit));
             }
 
-            // Apply range/pagination
-            if (options.range) {
-                query = query.range(options.range.from, options.range.to);
+            // Apply offset
+            if (options.offset) {
+                queries.push(appwriteHelpers.query.offset(options.offset));
             }
 
-            const { data, error } = await query;
+            const result = await appwriteHelpers.listDocuments(table, queries);
 
-            if (error) throw error;
+            if (!result.success) throw new Error(result.error);
+
+            // Handle select option (simplified)
+            let data = result.data.documents;
+            if (options.select && options.select !== '*') {
+                // Basic select implementation - would need more complex parsing for full support
+                const fields = options.select.split(',').map(f => f.trim());
+                data = data.map(doc => {
+                    const selected = {};
+                    fields.forEach(field => {
+                        if (doc[field] !== undefined) {
+                            selected[field] = doc[field];
+                        }
+                    });
+                    return selected;
+                });
+            }
+
             return { success: true, data };
         } catch (error) {
             console.error(`Error fetching from ${table}:`, error);
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     },
 
     // Get single record by ID
     getById: async (table, id, select = '*') => {
         try {
-            const { data, error } = await supabase
-                .from(table)
-                .select(select)
-                .eq('id', id)
-                .single();
+            const result = await appwriteHelpers.getDocument(table, id);
 
-            if (error) throw error;
+            if (!result.success) throw new Error(result.error);
+
+            // Handle select option
+            let data = result.data;
+            if (select && select !== '*') {
+                const fields = select.split(',').map(f => f.trim());
+                const selected = {};
+                fields.forEach(field => {
+                    if (data[field] !== undefined) {
+                        selected[field] = data[field];
+                    }
+                });
+                data = selected;
+            }
+
             return { success: true, data };
         } catch (error) {
             console.error(`Error fetching ${table} by ID:`, error);
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     },
 
     // Create new record
     create: async (table, data) => {
         try {
-            const { data: result, error } = await supabase
-                .from(table)
-                .insert(data)
-                .select()
-                .single();
+            const result = await appwriteHelpers.createDocument(table, data);
 
-            if (error) throw error;
-            return { success: true, data: result };
+            if (!result.success) throw new Error(result.error);
+
+            return { success: true, data: result.data };
         } catch (error) {
             console.error(`Error creating in ${table}:`, error);
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     },
 
     // Update record
     update: async (table, id, data) => {
         try {
-            const { data: result, error } = await supabase
-                .from(table)
-                .update(data)
-                .eq('id', id)
-                .select()
-                .single();
+            const result = await appwriteHelpers.updateDocument(table, id, data);
 
-            if (error) throw error;
-            return { success: true, data: result };
+            if (!result.success) throw new Error(result.error);
+
+            return { success: true, data: result.data };
         } catch (error) {
             console.error(`Error updating ${table}:`, error);
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     },
 
     // Delete record
     delete: async (table, id) => {
         try {
-            const { error } = await supabase
-                .from(table)
-                .delete()
-                .eq('id', id);
+            const result = await appwriteHelpers.deleteDocument(table, id);
 
-            if (error) throw error;
+            if (!result.success) throw new Error(result.error);
+
             return { success: true };
         } catch (error) {
             console.error(`Error deleting from ${table}:`, error);
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     },
 
     // Count records
     count: async (table, filters = {}) => {
         try {
-            let query = supabase.from(table).select('*', { count: 'exact', head: true });
+            const queries = [];
 
             Object.entries(filters).forEach(([key, value]) => {
-                query = query.eq(key, value);
+                queries.push(appwriteHelpers.query.equal(key, value));
             });
 
-            const { count, error } = await query;
+            const result = await appwriteHelpers.listDocuments(table, queries);
 
-            if (error) throw error;
-            return { success: true, count };
+            if (!result.success) throw new Error(result.error);
+
+            return { success: true, count: result.data.total };
         } catch (error) {
             console.error(`Error counting ${table}:`, error);
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     }
 };
 
 // Products API
 export const productsAPI = {
-    getAll: (options) => api.getAll(TABLES.PRODUCTS, options),
-    getById: (id) => api.getById(TABLES.PRODUCTS, id),
-    create: (data) => api.create(TABLES.PRODUCTS, data),
-    update: (id, data) => api.update(TABLES.PRODUCTS, id, data),
-    delete: (id) => api.delete(TABLES.PRODUCTS, id),
+    getAll: (options) => api.getAll(COLLECTIONS.PRODUCTS, options),
+    getById: (id) => api.getById(COLLECTIONS.PRODUCTS, id),
+    create: (data) => api.create(COLLECTIONS.PRODUCTS, data),
+    update: (id, data) => api.update(COLLECTIONS.PRODUCTS, id, data),
+    delete: (id) => api.delete(COLLECTIONS.PRODUCTS, id),
 
     search: async (query) => {
         try {
-            const { data, error } = await supabase
-                .from(TABLES.PRODUCTS)
-                .select('*')
-                .or(`name.ilike.%${query}%,description.ilike.%${query}%`)
-                .limit(20);
+            const result = await appwriteHelpers.listDocuments(COLLECTIONS.PRODUCTS, [
+                appwriteHelpers.query.search('name', query),
+                appwriteHelpers.query.limit(20)
+            ]);
 
-            if (error) throw error;
-            return { success: true, data };
+            if (!result.success) throw new Error(result.error);
+
+            return { success: true, data: result.data.documents };
         } catch (error) {
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     },
 
     getByCategory: async (categoryId) => {
-        return api.getAll(TABLES.PRODUCTS, {
+        return api.getAll(COLLECTIONS.PRODUCTS, {
             filters: { category_id: categoryId }
         });
     }
@@ -162,40 +183,41 @@ export const productsAPI = {
 
 // Orders API
 export const ordersAPI = {
-    getAll: (options) => api.getAll(TABLES.ORDERS, options),
-    getById: (id) => api.getById(TABLES.ORDERS, id, '*, order_items(*, products(*))'),
-    create: (data) => api.create(TABLES.ORDERS, data),
-    update: (id, data) => api.update(TABLES.ORDERS, id, data),
-    delete: (id) => api.delete(TABLES.ORDERS, id),
+    getAll: (options) => api.getAll(COLLECTIONS.ORDERS, options),
+    getById: (id) => api.getById(COLLECTIONS.ORDERS, id),
+    create: (data) => api.create(COLLECTIONS.ORDERS, data),
+    update: (id, data) => api.update(COLLECTIONS.ORDERS, id, data),
+    delete: (id) => api.delete(COLLECTIONS.ORDERS, id),
 
     getByUser: async (userId) => {
-        return api.getAll(TABLES.ORDERS, {
+        return api.getAll(COLLECTIONS.ORDERS, {
             filters: { user_id: userId },
             orderBy: { column: 'created_at', ascending: false }
         });
     },
 
     getByStatus: async (status) => {
-        return api.getAll(TABLES.ORDERS, {
+        return api.getAll(COLLECTIONS.ORDERS, {
             filters: { status },
             orderBy: { column: 'created_at', ascending: false }
         });
     },
 
     // Adiciona um item ao pedido
-    addItem: (data) => api.create(TABLES.ORDER_ITEMS, data),
+    addItem: (data) => api.create(COLLECTIONS.ORDER_ITEMS, data),
 
     // Adiciona múltiplos itens de uma vez (Bulk Insert)
     addItems: async (items) => {
         try {
-            const { data, error } = await supabase
-                .from(TABLES.ORDER_ITEMS)
-                .insert(items)
-                .select();
-            if (error) throw error;
-            return { success: true, data };
+            const results = [];
+            for (const item of items) {
+                const result = await appwriteHelpers.createDocument(COLLECTIONS.ORDER_ITEMS, item);
+                if (!result.success) throw new Error(result.error);
+                results.push(result.data);
+            }
+            return { success: true, data: results };
         } catch (error) {
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     }
 };
@@ -203,54 +225,59 @@ export const ordersAPI = {
 // Cart API
 export const cartAPI = {
     getByUser: async (userId) => {
-        return api.getAll(TABLES.CART, {
-            filters: { user_id: userId },
-            select: '*, products(*)'
+        return api.getAll(COLLECTIONS.CART, {
+            filters: { user_id: userId }
         });
     },
 
     addItem: async (userId, productId, quantity = 1) => {
         try {
             // Check if item already exists
-            const { data: existing } = await supabase
-                .from(TABLES.CART)
-                .select('*')
-                .eq('user_id', userId)
-                .eq('product_id', productId)
-                .single();
+            const existingResult = await appwriteHelpers.listDocuments(COLLECTIONS.CART, [
+                appwriteHelpers.query.equal('user_id', userId),
+                appwriteHelpers.query.equal('product_id', productId)
+            ]);
 
-            if (existing) {
+            if (!existingResult.success) throw new Error(existingResult.error);
+
+            if (existingResult.data.documents.length > 0) {
                 // Update quantity
-                return api.update(TABLES.CART, existing.id, {
+                const existing = existingResult.data.documents[0];
+                return api.update(COLLECTIONS.CART, existing.id, {
                     quantity: existing.quantity + quantity
                 });
             } else {
                 // Create new item
-                return api.create(TABLES.CART, {
+                return api.create(COLLECTIONS.CART, {
                     user_id: userId,
                     product_id: productId,
                     quantity
                 });
             }
         } catch (error) {
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     },
 
-    updateQuantity: (id, quantity) => api.update(TABLES.CART, id, { quantity }),
-    removeItem: (id) => api.delete(TABLES.CART, id),
+    updateQuantity: (id, quantity) => api.update(COLLECTIONS.CART, id, { quantity }),
+    removeItem: (id) => api.delete(COLLECTIONS.CART, id),
 
     clearCart: async (userId) => {
         try {
-            const { error } = await supabase
-                .from(TABLES.CART)
-                .delete()
-                .eq('user_id', userId);
+            const result = await appwriteHelpers.listDocuments(COLLECTIONS.CART, [
+                appwriteHelpers.query.equal('user_id', userId)
+            ]);
 
-            if (error) throw error;
+            if (!result.success) throw new Error(result.error);
+
+            // Delete all items
+            for (const item of result.data.documents) {
+                await appwriteHelpers.deleteDocument(COLLECTIONS.CART, item.id);
+            }
+
             return { success: true };
         } catch (error) {
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     }
 };
@@ -258,135 +285,112 @@ export const cartAPI = {
 // Wishlist API
 export const wishlistAPI = {
     getByUser: async (userId) => {
-        return api.getAll(TABLES.WISHLIST, {
-            filters: { user_id: userId },
-            select: '*, products(*)'
+        return api.getAll(COLLECTIONS.WISHLIST, {
+            filters: { user_id: userId }
         });
     },
 
-    addItem: (userId, productId) => api.create(TABLES.WISHLIST, {
+    addItem: (userId, productId) => api.create(COLLECTIONS.WISHLIST, {
         user_id: userId,
         product_id: productId
     }),
 
     removeItem: async (userId, productId) => {
         try {
-            const { error } = await supabase
-                .from(TABLES.WISHLIST)
-                .delete()
-                .eq('user_id', userId)
-                .eq('product_id', productId);
+            const result = await appwriteHelpers.listDocuments(COLLECTIONS.WISHLIST, [
+                appwriteHelpers.query.equal('user_id', userId),
+                appwriteHelpers.query.equal('product_id', productId)
+            ]);
 
-            if (error) throw error;
+            if (!result.success) throw new Error(result.error);
+
+            if (result.data.documents.length > 0) {
+                await appwriteHelpers.deleteDocument(COLLECTIONS.WISHLIST, result.data.documents[0].id);
+            }
+
             return { success: true };
         } catch (error) {
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     },
 
     isInWishlist: async (userId, productId) => {
         try {
-            const { data, error } = await supabase
-                .from(TABLES.WISHLIST)
-                .select('id')
-                .eq('user_id', userId)
-                .eq('product_id', productId)
-                .single();
+            const result = await appwriteHelpers.listDocuments(COLLECTIONS.WISHLIST, [
+                appwriteHelpers.query.equal('user_id', userId),
+                appwriteHelpers.query.equal('product_id', productId)
+            ]);
 
-            return { success: true, exists: !!data };
+            return { success: true, exists: result.data.documents.length > 0 };
         } catch (error) {
             return { success: true, exists: false };
         }
     }
 };
 
-// Deliveries API
-export const deliveriesAPI = {
-    getAll: (options) => api.getAll(TABLES.DELIVERIES, options),
-    getById: (id) => api.getById(TABLES.DELIVERIES, id, '*, orders(*)'),
-    create: (data) => api.create(TABLES.DELIVERIES, data),
-    update: (id, data) => api.update(TABLES.DELIVERIES, id, data),
-
-    getByDeliveryPerson: async (userId) => {
-        return api.getAll(TABLES.DELIVERIES, {
-            filters: { delivery_person_id: userId },
-            orderBy: { column: 'created_at', ascending: false }
-        });
-    },
-
-    getActiveDeliveries: async (userId) => {
-        try {
-            const { data, error } = await supabase
-                .from(TABLES.DELIVERIES)
-                .select('*, orders(*)')
-                .eq('delivery_person_id', userId)
-                .in('status', ['assigned', 'picked_up', 'in_transit']);
-
-            if (error) throw error;
-            return { success: true, data };
-        } catch (error) {
-            return { success: false, error: handleSupabaseError(error) };
-        }
-    }
-};
 
 // Users API
 export const usersAPI = {
-    getAll: (options) => api.getAll(TABLES.USERS, options),
-    getById: (id) => api.getById(TABLES.USERS, id),
-    update: (id, data) => api.update(TABLES.USERS, id, data),
-    delete: (id) => api.delete(TABLES.USERS, id),
+    getAll: (options) => api.getAll(COLLECTIONS.USERS, options),
+    getById: (id) => api.getById(COLLECTIONS.USERS, id),
+    update: (id, data) => api.update(COLLECTIONS.USERS, id, data),
+    delete: (id) => api.delete(COLLECTIONS.USERS, id),
 
     getPendingApprovals: async () => {
-        return api.getAll(TABLES.USERS, {
+        return api.getAll(COLLECTIONS.USERS, {
             filters: { approval_status: 'pending' },
             orderBy: { column: 'created_at', ascending: false }
         });
     },
 
-    approveUser: (id) => api.update(TABLES.USERS, id, {
+    approveUser: (id) => api.update(COLLECTIONS.USERS, id, {
         approval_status: 'approved'
     }),
 
-    rejectUser: (id) => api.update(TABLES.USERS, id, {
+    rejectUser: (id) => api.update(COLLECTIONS.USERS, id, {
         approval_status: 'rejected'
     })
 };
 
 // Categories API
 export const categoriesAPI = {
-    getAll: () => api.getAll(TABLES.CATEGORIES),
-    getById: (id) => api.getById(TABLES.CATEGORIES, id),
-    create: (data) => api.create(TABLES.CATEGORIES, data),
-    update: (id, data) => api.update(TABLES.CATEGORIES, id, data),
-    delete: (id) => api.delete(TABLES.CATEGORIES, id)
+    getAll: () => api.getAll(COLLECTIONS.CATEGORIES),
+    getById: (id) => api.getById(COLLECTIONS.CATEGORIES, id),
+    create: (data) => api.create(COLLECTIONS.CATEGORIES, data),
+    update: (id, data) => api.update(COLLECTIONS.CATEGORIES, id, data),
+    delete: (id) => api.delete(COLLECTIONS.CATEGORIES, id)
 };
 
 // Notifications API
 export const notificationsAPI = {
     getByUser: async (userId) => {
-        return api.getAll(TABLES.NOTIFICATIONS, {
+        return api.getAll(COLLECTIONS.NOTIFICATIONS, {
             filters: { user_id: userId },
             orderBy: { column: 'created_at', ascending: false },
             limit: 50
         });
     },
 
-    create: (data) => api.create(TABLES.NOTIFICATIONS, data),
-    markAsRead: (id) => api.update(TABLES.NOTIFICATIONS, id, { read: true }),
+    create: (data) => api.create(COLLECTIONS.NOTIFICATIONS, data),
+    markAsRead: (id) => api.update(COLLECTIONS.NOTIFICATIONS, id, { read: true }),
 
     markAllAsRead: async (userId) => {
         try {
-            const { error } = await supabase
-                .from(TABLES.NOTIFICATIONS)
-                .update({ read: true })
-                .eq('user_id', userId)
-                .eq('read', false);
+            const result = await appwriteHelpers.listDocuments(COLLECTIONS.NOTIFICATIONS, [
+                appwriteHelpers.query.equal('user_id', userId),
+                appwriteHelpers.query.equal('read', false)
+            ]);
 
-            if (error) throw error;
+            if (!result.success) throw new Error(result.error);
+
+            // Update all notifications
+            for (const notification of result.data.documents) {
+                await appwriteHelpers.updateDocument(COLLECTIONS.NOTIFICATIONS, notification.id, { read: true });
+            }
+
             return { success: true };
         } catch (error) {
-            return { success: false, error: handleSupabaseError(error) };
+            return { success: false, error: error.message };
         }
     }
 };
@@ -397,7 +401,6 @@ export default {
     ordersAPI,
     cartAPI,
     wishlistAPI,
-    deliveriesAPI,
     usersAPI,
     categoriesAPI,
     notificationsAPI
