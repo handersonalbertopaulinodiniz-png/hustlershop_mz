@@ -1,0 +1,121 @@
+/* Landing Page Styles */
+body {
+    background: var(--landing-bg);
+    color: var(--text-main);
+}
+
+.landing-hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 4rem;
+    padding: 4rem clamp(1.5rem, 4vw, 4rem);
+    align-items: center;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+}
+
+.hero-title {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.05;
+    font-weight: 800;
+    margin: 1.25rem 0 1rem;
+}
+
+.hero-title span {
+    color: #60a5fa;
+}
+
+.hero-copy {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 520px;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.hero-actions .btn {
+    padding: 0.9rem 1.6rem;
+    font-size: 1rem;
+}
+
+.hero-panel {
+    background: rgba(17, 24, 39, 0.7);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 2rem;
+    padding: 2.5rem;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+}
+
+.hero-panel h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+}
+
+.hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1.5rem;
+}
+
+.metric-card {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 1.25rem;
+    padding: 1.2rem;
+    border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+.metric-card h4 {
+    font-size: 1.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.metric-card p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.hero-list {
+    margin-top: 2rem;
+    display: grid;
+    gap: 1rem;
+}
+
+.hero-list-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.hero-list-item i {
+    color: #38bdf8;
+}
+
+@media (max-width: 900px) {
+    .landing-hero {
+        grid-template-columns: 1fr;
+        padding-top: 6rem;
+    }
+
+    .hero-panel {
+        order: -1;
+    }
+}

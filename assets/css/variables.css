@@ -106,6 +106,16 @@
   /* Gradients - Monochrome Premium */
   --gradient-primary: linear-gradient(135deg, #000, #444);
   --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+
+  /* Brand Colors - HustlerShop MZ */
+  --brand-primary: #000000;
+  --brand-secondary: #ffffff;
+  --brand-accent: #60a5fa;
+  --brand-accent-light: #93c5fd;
+  --brand-accent-dark: #2563eb;
+
+  /* Landing Page Background */
+  --landing-bg: radial-gradient(circle at top left, #1f2937, #0b0f1a 40%, #070a12 100%);
 }
 
 /* Dark Theme Variables - Deep Black Mode (Preto) */

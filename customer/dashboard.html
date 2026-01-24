@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="pt-BR" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Dashboard - HustlerShop</title>
+    <title>Painel do Cliente - HustlerShop</title>
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
@@ -29,24 +29,24 @@
                 <div class="sidebar-nav">
                     <a href="dashboard.html" class="nav-item active">
                         <i data-lucide="layout-dashboard"></i>
-                        <span>Dashboard</span>
+                        <span>Painel</span>
                     </a>
                     <a href="cart.html" class="nav-item">
                         <i data-lucide="shopping-cart"></i>
-                        <span>Cart</span>
+                        <span>Carrinho</span>
                         <span class="badge badge-primary hidden" data-cart-badge>0</span>
                     </a>
                     <a href="orders.html" class="nav-item">
                         <i data-lucide="package"></i>
-                        <span>Orders</span>
+                        <span>Encomendas</span>
                     </a>
                     <a href="wishlist.html" class="nav-item">
                         <i data-lucide="heart"></i>
-                        <span>Wishlist</span>
+                        <span>Favoritos</span>
                     </a>
                     <a href="profile.html" class="nav-item">
                         <i data-lucide="user"></i>
-                        <span>Profile</span>
+                        <span>Perfil</span>
                     </a>
                 </div>
 
@@ -54,7 +54,7 @@
                     <button id="logoutBtn" type="button"
                         class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
                         <i data-lucide="log-out"></i>
-                        <span>Logout</span>
+                        <span>Sair</span>
                     </button>
                 </div>
             </nav>
@@ -63,10 +63,10 @@
                 <div class="user-profile-mini">
                     <div class="user-avatar">
                         <img src="https://ui-avatars.com/api/?name=Customer&background=000&color=fff"
-                            alt="Customer">
+                            alt="Cliente">
                     </div>
                     <div class="user-info">
-                        <span class="user-name" data-user-name>Customer</span>
+                        <span class="user-name" data-user-name>Cliente</span>
                         <span class="user-role">Cliente</span>
                     </div>
                 </div>
@@ -78,30 +78,30 @@
             <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
-                    <button type="button" class="sidebar-toggle" aria-label="Toggle menu">
+                    <button type="button" class="sidebar-toggle" aria-label="Alternar menu">
                         <i data-lucide="menu"></i>
                     </button>
                     <div class="search-container">
                         <i data-lucide="search"></i>
-                        <input type="text" placeholder="Search products...">
+                        <input type="text" placeholder="Pesquisar produtos...">
                     </div>
                 </div>
 
                 <div class="topbar-right">
-                    <button type="button" class="icon-btn relative" aria-label="View notifications">
+                    <button type="button" class="icon-btn relative" aria-label="Ver notificações">
                         <i data-lucide="bell"></i>
                         <span class="notification-dot"></span>
                     </button>
 
-                    <button type="button" class="icon-btn" aria-label="Toggle theme">
+                    <button type="button" class="icon-btn" aria-label="Alternar tema">
                         <i data-lucide="moon"></i>
                     </button>
 
                     <div class="user-dropdown">
-                        <button type="button" class="user-menu-trigger" aria-label="User menu">
+                        <button type="button" class="user-menu-trigger" aria-label="Menu do utilizador">
                             <div class="user-avatar">
                                 <img src="https://ui-avatars.com/api/?name=Customer&background=000&color=fff"
-                                    alt="User">
+                                    alt="Utilizador">
                             </div>
                             <i data-lucide="chevron-down" class="dropdown-icon"></i>
                         </button>
@@ -112,8 +112,8 @@
             <!-- Page Content -->
             <div class="page-content">
                 <div class="content-header">
-                    <h1 class="page-title">Welcome to HustlerShop</h1>
-                    <p class="page-description">Browse our latest products and manage your orders</p>
+                    <h1 class="page-title">Bem-vindo à HustlerShop</h1>
+                    <p class="page-description">Navegue pelos nossos últimos produtos e gerencie suas encomendas</p>
                 </div>
 
                 <div class="dashboard-grid">
@@ -125,7 +125,7 @@
                             </div>
                             <div class="stat-content">
                                 <div class="stat-value" id="total-orders">0</div>
-                                <div class="stat-label">Total Orders</div>
+                                <div class="stat-label">Total de Encomendas</div>
                             </div>
                         </div>
                         <div class="stat-card">
@@ -134,7 +134,7 @@
                             </div>
                             <div class="stat-content">
                                 <div class="stat-value" id="wishlist-count">0</div>
-                                <div class="stat-label">Wishlist Items</div>
+                                <div class="stat-label">Itens Favoritos</div>
                             </div>
                         </div>
                         <div class="stat-card">
@@ -143,7 +143,7 @@
                             </div>
                             <div class="stat-content">
                                 <div class="stat-value" id="pending-orders">0</div>
-                                <div class="stat-label">Pending Orders</div>
+                                <div class="stat-label">Encomendas Pendentes</div>
                             </div>
                         </div>
                     </div>
@@ -151,10 +151,10 @@
                     <!-- Recent Products -->
                     <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title">Latest Products</h2>
+                            <h2 class="card-title">Últimos Produtos</h2>
                             <a href="product.html" class="btn btn-outline btn-sm">
                                 <i data-lucide="arrow-right"></i>
-                                View All
+                                Ver Todos
                             </a>
                         </div>
                         <div class="card-content">

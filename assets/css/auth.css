@@ -1,0 +1,112 @@
+/* Auth Page Styles */
+.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: var(--bg-secondary);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+    padding: var(--space-8);
+}
+
+.auth-card {
+    background: var(--surface);
+    padding: var(--space-8);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-light);
+}
+
+.auth-logo {
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.auth-logo .logo-icon {
+    font-size: 3rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+}
+
+.auth-logo .logo-text {
+    font-size: 1.5rem;
+    font-weight: var(--font-bold);
+    color: var(--text-primary);
+}
+
+.auth-title {
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.auth-title h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+}
+
+.auth-title p {
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+.form-group {
+    margin-bottom: var(--space-4);
+}
+
+.input-label {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+}
+
+.input-label.required::after {
+    content: ' *';
+    color: var(--error);
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.checkbox input[type="checkbox"] {
+    width: auto;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: var(--space-6);
+}
+
+.auth-footer p {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+.auth-footer a {
+    color: var(--primary-600);
+    font-weight: var(--font-medium);
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    color: var(--primary-700);
+    text-decoration: underline;
+}
+
+.theme-toggle-btn {
+    position: fixed;
+    top: var(--space-4);
+    right: var(--space-4);
+    z-index: var(--z-50);
+}
