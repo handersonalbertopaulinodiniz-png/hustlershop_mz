@@ -1,53 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard - HustlerShop</title>
     <link rel="icon" type="image/png" href="../favicon.png">
-    <link rel="apple-touch-icon" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body class="admin-body">
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="HustlerShop" width="40">
-                <h2 class="font-bold text-xl">HustlerShop</h2>
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i data-lucide="shopping-bag"></i>
+                    </div>
+                    <span class="logo-text">HustlerShop</span>
+                </div>
             </div>
 
             <nav class="sidebar-content">
-                <a href="/customer/dashboard.html" class="sidebar-nav-link active">
-                    <span class="sidebar-nav-link-icon">🏠</span>
-                    <span class="sidebar-nav-link-text">Dashboard</span>
-                </a>
-                <a href="cart.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">🛒</span>
-                    <span class="sidebar-nav-link-text">Cart</span>
-                    <span class="badge badge-primary hidden" data-cart-badge>0</span>
-                </a>
-                <a href="orders.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">📦</span>
-                    <span class="sidebar-nav-link-text">Orders</span>
-                </a>
-                <a href="wishlist.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">❤️</span>
-                    <span class="sidebar-nav-link-text">Wishlist</span>
-                </a>
-                <a href="profile.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">👤</span>
-                    <span class="sidebar-nav-link-text">Profile</span>
-                </a>
+                <div class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item active">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="cart.html" class="nav-item">
+                        <i data-lucide="shopping-cart"></i>
+                        <span>Cart</span>
+                        <span class="badge badge-primary hidden" data-cart-badge>0</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <i data-lucide="package"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="wishlist.html" class="nav-item">
+                        <i data-lucide="heart"></i>
+                        <span>Wishlist</span>
+                    </a>
+                    <a href="profile.html" class="nav-item">
+                        <i data-lucide="user"></i>
+                        <span>Profile</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-footer-nav">
+                    <button id="logoutBtn" type="button"
+                        class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
             </nav>
 
             <div class="sidebar-footer">
-                <a href="../auth/logout.html" class="sidebar-nav-link" data-logout>
-                    <span class="sidebar-nav-link-icon">🚪</span>
-                    <span class="sidebar-nav-link-text">Logout</span>
-                </a>
+                <div class="user-profile-mini">
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Customer&background=000&color=fff"
+                            alt="Customer">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" data-user-name>Customer</span>
+                        <span class="user-role">Cliente</span>
+                    </div>
+                </div>
             </div>
         </aside>
 
@@ -56,31 +78,88 @@
             <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
-                    <button type="button" class="btn btn-ghost btn-icon" data-mobile-menu>☰</button>
-                    <h1 class="text-xl font-semibold">Dashboard</h1>
+                    <button type="button" class="sidebar-toggle" aria-label="Toggle menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="search-container">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Search products...">
+                    </div>
                 </div>
 
                 <div class="topbar-right">
-                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
-                        <span class="theme-icon">🌙</span>
+                    <button type="button" class="icon-btn relative" aria-label="View notifications">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-dot"></span>
                     </button>
 
-                    <div class="avatar" data-user-avatar>
-                        <span data-user-name>U</span>
+                    <button type="button" class="icon-btn" aria-label="Toggle theme">
+                        <i data-lucide="moon"></i>
+                    </button>
+
+                    <div class="user-dropdown">
+                        <button type="button" class="user-menu-trigger" aria-label="User menu">
+                            <div class="user-avatar">
+                                <img src="https://ui-avatars.com/api/?name=Customer&background=000&color=fff"
+                                    alt="User">
+                            </div>
+                            <i data-lucide="chevron-down" class="dropdown-icon"></i>
+                        </button>
                     </div>
                 </div>
             </header>
 
             <!-- Page Content -->
             <div class="page-content">
-                <div class="container">
-                    <div class="section">
-                        <div class="section-header">
-                            <h2 class="section-title">Welcome to HustlerShop</h2>
-                            <p class="section-description">Browse our latest products</p>
-                        </div>
+                <div class="content-header">
+                    <h1 class="page-title">Welcome to HustlerShop</h1>
+                    <p class="page-description">Browse our latest products and manage your orders</p>
+                </div>
 
-                        <div id="products-container"></div>
+                <div class="dashboard-grid">
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i data-lucide="shopping-cart"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="total-orders">0</div>
+                                <div class="stat-label">Total Orders</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i data-lucide="heart"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="wishlist-count">0</div>
+                                <div class="stat-label">Wishlist Items</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i data-lucide="package"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="pending-orders">0</div>
+                                <div class="stat-label">Pending Orders</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Products -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Latest Products</h2>
+                            <a href="product.html" class="btn btn-outline btn-sm">
+                                <i data-lucide="arrow-right"></i>
+                                View All
+                            </a>
+                        </div>
+                        <div class="card-content">
+                            <div id="products-container" class="products-grid"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -94,6 +173,9 @@
         import { initCart } from '../assets/js/modules/cart.js';
         import { renderProducts } from '../assets/js/modules/products.js';
 
+        // Initialize Lucide icons
+        lucide.createIcons();
+
         // Initialize
         async function init() {
             await initAuth();
@@ -104,13 +186,25 @@
             initTopbar();
             await initCart();
 
+            // Load dashboard stats
+            loadDashboardStats();
+
             // Load products
             await renderProducts('products-container', {
-                limit: 12,
+                limit: 8,
                 orderBy: { column: 'created_at', ascending: false }
             });
         }
 
+        // Load dashboard statistics
+        async function loadDashboardStats() {
+            // TODO: Implement actual stats loading from API
+            document.getElementById('total-orders').textContent = '12';
+            document.getElementById('wishlist-count').textContent = '5';
+            document.getElementById('pending-orders').textContent = '2';
+        }
+
+        // Initialize page
         init();
     </script>
 </body>

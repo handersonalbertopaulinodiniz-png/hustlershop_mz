@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -7,15 +7,22 @@
     <meta name="theme-color" content="#ffffff">
     <title>Sign In - HustlerShop</title>
     <link rel="icon" type="image/png" href="../favicon.png">
-    <link rel="apple-touch-icon" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body class="admin-body">
     <div class="auth-container">
         <div class="auth-card animate-scale-in">
             <div class="text-center mb-6">
-                <img src="../assets/images/logo.png" alt="HustlerShop" class="auth-logo">
+                <div class="logo-container mb-4">
+                    <div class="logo-icon mx-auto">
+                        <i data-lucide="shopping-bag"></i>
+                    </div>
+                    <span class="logo-text">HustlerShop</span>
+                </div>
                 <h1 class="text-3xl font-bold gradient-text">Bem-vindo de volta</h1>
                 <p class="text-secondary">Entre na sua conta</p>
             </div>
@@ -58,20 +65,24 @@
     </div>
 
     <button type="button" class="btn btn-ghost btn-icon theme-toggle fixed top-4 right-4 z-50" data-theme-toggle>
-        <span class="theme-icon">🌙</span>
+        <i data-lucide="moon"></i>
     </button>
 
     <script type="module">
-        import { signIn } from '../assets/js/core/auth.js';
+        import { signIn } from '../assets/js/core/auth-appwrite.js';
         import { showToast } from '../assets/js/components/toast.js';
         import { getTheme, onThemeChange } from '../assets/js/core/theme-engine.js';
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
 
         // Theme Toggle Logic
         const themeToggle = document.querySelector('[data-theme-toggle]');
         if (themeToggle) {
-            const icon = themeToggle.querySelector('.theme-icon');
+            const icon = themeToggle.querySelector('i');
             const updateIcon = (theme) => {
-                icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+                icon.setAttribute('data-lucide', theme === 'dark' ? 'sun' : 'moon');
+                lucide.createIcons();
             };
 
             // Initial state
@@ -99,7 +110,7 @@
             submitBtn.textContent = 'Sign In';
 
             if (!result.success) {
-                showToast(result.error?.message || 'Failed to sign in', 'error');
+                showToast(result.error || 'Failed to sign in', 'error');
             }
         });
     </script>

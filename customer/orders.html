@@ -1,67 +1,155 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Pedidos - HustlerShop</title>
+    <title>My Orders - HustlerShop</title>
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body class="admin-body">
     <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="HustlerShop" width="32">
-                <span class="font-bold text-lg">HustlerShop</span>
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i data-lucide="shopping-bag"></i>
+                    </div>
+                    <span class="logo-text">HustlerShop</span>
+                </div>
             </div>
+
             <nav class="sidebar-content">
-                <a href="dashboard.html" class="nav-item"><span>🏠</span><span>Início</span></a>
-                <a href="cart.html" class="nav-item"><span>🛒</span><span>Carrinho</span></a>
-                <a href="orders.html" class="nav-item active"><span>📦</span><span>Meus Pedidos</span></a>
-                <a href="wishlist.html" class="nav-item"><span>❤️</span><span>Favoritos</span></a>
+                <div class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="cart.html" class="nav-item">
+                        <i data-lucide="shopping-cart"></i>
+                        <span>Cart</span>
+                        <span class="badge badge-primary hidden" data-cart-badge>0</span>
+                    </a>
+                    <a href="orders.html" class="nav-item active">
+                        <i data-lucide="package"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="wishlist.html" class="nav-item">
+                        <i data-lucide="heart"></i>
+                        <span>Wishlist</span>
+                    </a>
+                    <a href="profile.html" class="nav-item">
+                        <i data-lucide="user"></i>
+                        <span>Profile</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-footer-nav">
+                    <button id="logoutBtn" type="button"
+                        class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
             </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile-mini">
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Customer&background=000&color=fff"
+                            alt="Customer">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" data-user-name>Customer</span>
+                        <span class="user-role">Cliente</span>
+                    </div>
+                </div>
+            </div>
         </aside>
 
+        <!-- Main Content -->
         <main class="main-content">
+            <!-- Topbar -->
             <header class="topbar">
-                <h2 class="text-xl font-bold">Meus Pedidos</h2>
+                <div class="topbar-left">
+                    <button type="button" class="sidebar-toggle" aria-label="Toggle menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="search-container">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Search orders...">
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="icon-btn relative" aria-label="View notifications">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+
+                    <button type="button" class="icon-btn" aria-label="Toggle theme">
+                        <i data-lucide="moon"></i>
+                    </button>
+
+                    <div class="user-dropdown">
+                        <button type="button" class="user-menu-trigger" aria-label="User menu">
+                            <div class="user-avatar">
+                                <img src="https://ui-avatars.com/api/?name=Customer&background=000&color=fff"
+                                    alt="User">
+                            </div>
+                            <i data-lucide="chevron-down" class="dropdown-icon"></i>
+                        </button>
+                    </div>
+                </div>
             </header>
 
+            <!-- Page Content -->
             <div class="page-content">
-                <div class="space-y-6" id="ordersContainer">
+                <div class="content-header">
+                    <h1 class="page-title">My Orders</h1>
+                    <p class="page-description">Track and manage your order history</p>
+                </div>
+                <div class="orders-grid" id="ordersContainer">
                     <!-- Order Card Example -->
-                    <div class="card overflow-hidden">
-                        <div class="bg-tertiary p-4 flex justify-between items-center border-b">
-                            <div>
-                                <span class="text-xs text-secondary uppercase font-bold">Pedido #12589</span>
-                                <p class="text-sm">Realizado em 18 Jan 2026</p>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs text-secondary uppercase font-bold">Order #12589</span>
+                                    <p class="text-sm">Placed on Jan 18, 2026</p>
+                                </div>
+                                <span class="badge badge-warning">Processing</span>
                             </div>
-                            <span class="badge badge-warning">Em processamento</span>
                         </div>
-                        <div class="p-6">
+                        <div class="card-content">
                             <div class="flex gap-4 items-center">
                                 <div class="w-16 h-16 bg-tertiary rounded"></div>
                                 <div class="flex-1">
                                     <h4 class="font-bold">iPhone 15 Pro Max - 256GB</h4>
-                                    <p class="text-sm text-secondary">Qtd: 1</p>
+                                    <p class="text-sm text-secondary">Qty: 1</p>
                                 </div>
                                 <div class="text-right">
                                     <p class="font-bold">MZN 85,000.00</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-4 bg-tertiary/20 flex justify-between items-center">
-                            <button type="button" class="btn btn-ghost btn-sm text-primary-600">Ver Detalhes</button>
-                            <div class="text-sm">Total do Pedido: <span class="font-bold text-lg">MZN 85,150.00</span>
+                        <div class="card-footer">
+                            <div class="flex justify-between items-center">
+                                <button type="button" class="btn btn-ghost btn-sm text-primary-600">View Details</button>
+                                <div class="text-sm">Order Total: <span class="font-bold text-lg">MZN 85,150.00</span></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="empty-state py-12">
-                        <p class="text-secondary">Você ainda não tem outros pedidos cadastrados.</p>
+                        <i data-lucide="package" class="w-16 h-16 mx-auto text-secondary mb-4"></i>
+                        <p class="text-secondary">You don't have any other orders yet.</p>
                     </div>
                 </div>
             </div>
@@ -69,8 +157,22 @@
     </div>
 
     <script type="module">
-        import { initAuth } from '../assets/js/core/auth.js';
-        initAuth();
+        import { initAuth, requireAuth } from '../assets/js/core/auth.js';
+        import { initSidebar } from '../assets/js/components/sidebar.js';
+        import { initTopbar } from '../assets/js/components/topbar.js';
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        async function init() {
+            await initAuth();
+            if (!await requireAuth()) return;
+
+            initSidebar();
+            initTopbar();
+        }
+
+        init();
     </script>
 </body>
 

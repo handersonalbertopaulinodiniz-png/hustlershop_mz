@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin - HustlerShop</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body {
             display: flex;
@@ -15,42 +19,73 @@
             background: var(--bg-secondary);
         }
 
-        .login-card {
+        .admin-body {
+            background: var(--surface);
+        }
+
+        .auth-container {
             width: 100%;
             max-width: 400px;
+            padding: var(--space-8);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .auth-card {
             background: var(--surface);
             padding: var(--space-8);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-xl);
         }
 
-        .logo-area {
+        .logo-container {
             text-align: center;
             margin-bottom: var(--space-6);
+        }
+
+        .logo-icon {
+            font-size: 64px;
+            color: var(--primary);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
         }
     </style>
 </head>
 
-<body>
-    <div class="login-card">
-        <div class="logo-area">
-            <img src="assets/images/logo.png" alt="HustlerShop" width="64" height="64">
-            <h2 class="text-xl font-bold mt-4">Acesso Administrativo</h2>
+<body class="admin-body">
+    <div class="auth-container">
+        <div class="auth-card animate-scale-in">
+            <div class="text-center mb-6">
+                <div class="logo-container mb-4">
+                    <div class="logo-icon mx-auto">
+                        <i data-lucide="shopping-bag"></i>
+                    </div>
+                    <span class="logo-text">HustlerShop</span>
+                </div>
+                <h2 class="text-xl font-bold">Acesso Administrativo</h2>
+            </div>
+            <form id="adminLoginForm">
+                <div class="form-group mb-4">
+                    <label class="block text-sm font-medium mb-1">Utilizador</label>
+                    <input type="text" id="username" class="input w-full" placeholder="admin" required>
+                </div>
+                <div class="form-group mb-6">
+                    <label class="block text-sm font-medium mb-1">Palavra-passe</label>
+                    <input type="password" id="password" class="input w-full" placeholder="••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Entrar no Painel</button>
+            </form>
         </div>
-        <form id="adminLoginForm">
-            <div class="form-group mb-4">
-                <label class="block text-sm font-medium mb-1">Utilizador</label>
-                <input type="text" id="username" class="input w-full" placeholder="admin" required>
-            </div>
-            <div class="form-group mb-6">
-                <label class="block text-sm font-medium mb-1">Palavra-passe</label>
-                <input type="password" id="password" class="input w-full" placeholder="••••••" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-full">Entrar no Painel</button>
-        </form>
     </div>
 
     <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
         document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const user = document.getElementById('username').value;

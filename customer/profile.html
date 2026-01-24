@@ -1,35 +1,120 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Perfil - HustlerShop</title>
+    <title>My Profile - HustlerShop</title>
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body class="admin-body">
     <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="HustlerShop" width="32">
-                <span class="font-bold text-lg">HustlerShop</span>
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i data-lucide="shopping-bag"></i>
+                    </div>
+                    <span class="logo-text">HustlerShop</span>
+                </div>
             </div>
+
             <nav class="sidebar-content">
-                <a href="dashboard.html" class="nav-item"><span>🏠</span><span>Início</span></a>
-                <a href="profile.html" class="nav-item active"><span>👤</span><span>Perfil</span></a>
-                <a href="orders.html" class="nav-item"><span>📦</span><span>Pedidos</span></a>
+                <div class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="cart.html" class="nav-item">
+                        <i data-lucide="shopping-cart"></i>
+                        <span>Cart</span>
+                        <span class="badge badge-primary hidden" data-cart-badge>0</span>
+                    </a>
+                    <a href="orders.html" class="nav-item">
+                        <i data-lucide="package"></i>
+                        <span>Orders</span>
+                    </a>
+                    <a href="wishlist.html" class="nav-item">
+                        <i data-lucide="heart"></i>
+                        <span>Wishlist</span>
+                    </a>
+                    <a href="profile.html" class="nav-item active">
+                        <i data-lucide="user"></i>
+                        <span>Profile</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-footer-nav">
+                    <button id="logoutBtn" type="button"
+                        class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
             </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile-mini">
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Customer&background=000&color=fff"
+                            alt="Customer">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" data-user-name>Customer</span>
+                        <span class="user-role">Cliente</span>
+                    </div>
+                </div>
+            </div>
         </aside>
 
+        <!-- Main Content -->
         <main class="main-content">
+            <!-- Topbar -->
             <header class="topbar">
-                <h2 class="text-xl font-bold">Configurações de Perfil</h2>
+                <div class="topbar-left">
+                    <button type="button" class="sidebar-toggle" aria-label="Toggle menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="search-container">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Search profile...">
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="icon-btn relative" aria-label="View notifications">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+
+                    <button type="button" class="icon-btn" aria-label="Toggle theme">
+                        <i data-lucide="moon"></i>
+                    </button>
+
+                    <div class="user-dropdown">
+                        <button type="button" class="user-menu-trigger" aria-label="User menu">
+                            <div class="user-avatar">
+                                <img src="https://ui-avatars.com/api/?name=Customer&background=000&color=fff"
+                                    alt="User">
+                            </div>
+                            <i data-lucide="chevron-down" class="dropdown-icon"></i>
+                        </button>
+                    </div>
+                </div>
             </header>
 
+            <!-- Page Content -->
             <div class="page-content">
+                <div class="content-header">
+                    <h1 class="page-title">My Profile</h1>
+                    <p class="page-description">Manage your personal information and preferences</p>
+                </div>
                 <div class="max-w-2xl mx-auto space-y-8">
                     <!-- Profile Basic Info -->
                     <section class="card p-8">
@@ -94,8 +179,22 @@
     </div>
 
     <script type="module">
-        import { initAuth } from '../assets/js/core/auth.js';
-        initAuth();
+        import { initAuth, requireAuth } from '../assets/js/core/auth.js';
+        import { initSidebar } from '../assets/js/components/sidebar.js';
+        import { initTopbar } from '../assets/js/components/topbar.js';
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        async function init() {
+            await initAuth();
+            if (!await requireAuth()) return;
+
+            initSidebar();
+            initTopbar();
+        }
+
+        init();
     </script>
 </body>
 

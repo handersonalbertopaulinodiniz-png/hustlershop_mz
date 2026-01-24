@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Dashboard - HustlerShop</title>
     <link rel="icon" type="image/png" href="../favicon.png">
-    <link rel="apple-touch-icon" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         .delivery-card {
             margin-bottom: var(--space-4);
@@ -21,61 +23,150 @@
     </style>
 </head>
 
-<body>
+<body class="admin-body">
     <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="HustlerShop" width="40" height="40">
-                <h2 class="font-bold text-xl">Delivery Panel</h2>
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i data-lucide="shopping-bag"></i>
+                    </div>
+                    <span class="logo-text">HustlerShop</span>
+                </div>
             </div>
+
             <nav class="sidebar-content">
-                <a href="dashboard.html" class="sidebar-nav-link active">
-                    <span class="sidebar-nav-link-icon">🏠</span>
-                    <span class="sidebar-nav-link-text">Dashboard</span>
-                </a>
-                <a href="active-orders.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">🚚</span>
-                    <span class="sidebar-nav-link-text">Active Orders</span>
-                </a>
-                <a href="history.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">📜</span>
-                    <span class="sidebar-nav-link-text">History</span>
-                </a>
-                <a href="profile.html" class="sidebar-nav-link">
-                    <span class="sidebar-nav-link-icon">👤</span>
-                    <span class="sidebar-nav-link-text">Profile</span>
-                </a>
+                <div class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item active">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="active-orders.html" class="nav-item">
+                        <i data-lucide="truck"></i>
+                        <span>Active Orders</span>
+                        <span class="badge badge-warning hidden" id="active-orders-badge">0</span>
+                    </a>
+                    <a href="history.html" class="nav-item">
+                        <i data-lucide="history"></i>
+                        <span>History</span>
+                    </a>
+                    <a href="profile.html" class="nav-item">
+                        <i data-lucide="user"></i>
+                        <span>Profile</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-footer-nav">
+                    <button id="logoutBtn" type="button"
+                        class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
             </nav>
+
             <div class="sidebar-footer">
-                <a href="../auth/logout.html" class="sidebar-nav-link" data-logout>
-                    <span class="sidebar-nav-link-icon">🚪</span>
-                    <span class="sidebar-nav-link-text">Logout</span>
-                </a>
+                <div class="user-profile-mini">
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Delivery&background=000&color=fff"
+                            alt="Delivery">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" data-user-name>Delivery</span>
+                        <span class="user-role">Entregador</span>
+                    </div>
+                </div>
             </div>
         </aside>
 
+        <!-- Main Content -->
         <main class="main-content">
+            <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
-                    <button type="button" class="btn btn-ghost btn-icon" data-mobile-menu>☰</button>
-                    <h1 class="text-xl font-semibold">Delivery Dashboard</h1>
-                </div>
-                <div class="topbar-right">
-                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
-                        <span class="theme-icon">🌙</span>
+                    <button type="button" class="sidebar-toggle" aria-label="Toggle menu">
+                        <i data-lucide="menu"></i>
                     </button>
-                    <div class="avatar" data-user-avatar>D</div>
+                    <div class="search-container">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Search orders...">
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="icon-btn relative" aria-label="View notifications">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+
+                    <button type="button" class="icon-btn" aria-label="Toggle theme">
+                        <i data-lucide="moon"></i>
+                    </button>
+
+                    <div class="user-dropdown">
+                        <button type="button" class="user-menu-trigger" aria-label="User menu">
+                            <div class="user-avatar">
+                                <img src="https://ui-avatars.com/api/?name=Delivery&background=000&color=fff"
+                                    alt="User">
+                            </div>
+                            <i data-lucide="chevron-down" class="dropdown-icon"></i>
+                        </button>
+                    </div>
                 </div>
             </header>
 
+            <!-- Page Content -->
             <div class="page-content">
-                <div class="container">
-                    <div class="section">
-                        <div class="section-header">
-                            <h2 class="section-title">Active Deliveries</h2>
-                            <p class="section-description">Manage your current delivery tasks</p>
+                <div class="content-header">
+                    <h1 class="page-title">Delivery Dashboard</h1>
+                    <p class="page-description">Manage your delivery tasks and track orders</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i data-lucide="truck"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="active-deliveries">0</div>
+                                <div class="stat-label">Active Deliveries</div>
+                            </div>
                         </div>
-                        <div id="deliveries-container"></div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i data-lucide="check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="completed-today">0</div>
+                                <div class="stat-label">Completed Today</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i data-lucide="clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="pending-orders">0</div>
+                                <div class="stat-label">Pending Orders</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Deliveries -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Active Deliveries</h2>
+                            <a href="active-orders.html" class="btn btn-outline btn-sm">
+                                <i data-lucide="arrow-right"></i>
+                                View All
+                            </a>
+                        </div>
+                        <div class="card-content">
+                            <div id="deliveries-container" class="deliveries-grid"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -89,6 +180,9 @@
         import { renderDeliveries } from '../assets/js/modules/delivery.js';
         import { ROLES } from '../assets/js/core/supabase.js';
 
+        // Initialize Lucide icons
+        lucide.createIcons();
+
         async function init() {
             await initAuth();
             if (!await requireRole(ROLES.DELIVERY)) return;
@@ -96,7 +190,18 @@
             initSidebar();
             initTopbar();
 
+            // Load dashboard stats
+            loadDeliveryStats();
+
             await renderDeliveries('deliveries-container');
+        }
+
+        // Load delivery statistics
+        async function loadDeliveryStats() {
+            // TODO: Implement actual stats loading from API
+            document.getElementById('active-deliveries').textContent = '3';
+            document.getElementById('completed-today').textContent = '8';
+            document.getElementById('pending-orders').textContent = '2';
         }
 
         init();

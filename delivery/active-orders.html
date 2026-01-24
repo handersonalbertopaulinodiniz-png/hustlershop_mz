@@ -1,48 +1,107 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedidos Ativos - Entrega HustlerShop</title>
+    <title>Active Orders - HustlerShop Delivery</title>
     <link rel="icon" type="image/png" href="../favicon.png">
     <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body>
+<body class="admin-body">
     <div class="app-container">
+        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="HustlerShop" width="32">
-                <span class="font-bold text-lg">HustlerShop Entregas</span>
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i data-lucide="shopping-bag"></i>
+                    </div>
+                    <span class="logo-text">HustlerShop</span>
+                </div>
             </div>
+
             <nav class="sidebar-content">
-                <a href="dashboard.html" class="nav-item">
-                    <span>🏠</span>
-                    <span>Início</span>
-                </a>
-                <a href="active-orders.html" class="nav-item active">
-                    <span>🚚</span>
-                    <span>Pedidos Ativos</span>
-                </a>
-                <a href="history.html" class="nav-item">
-                    <span>📜</span>
-                    <span>Histórico</span>
-                </a>
+                <div class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="active-orders.html" class="nav-item active">
+                        <i data-lucide="truck"></i>
+                        <span>Active Orders</span>
+                        <span class="badge badge-warning hidden" id="active-orders-badge">0</span>
+                    </a>
+                    <a href="history.html" class="nav-item">
+                        <i data-lucide="history"></i>
+                        <span>History</span>
+                    </a>
+                    <a href="profile.html" class="nav-item">
+                        <i data-lucide="user"></i>
+                        <span>Profile</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-footer-nav">
+                    <button id="logoutBtn" type="button"
+                        class="nav-item w-full bg-transparent border-none text-left cursor-pointer">
+                        <i data-lucide="log-out"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
             </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile-mini">
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Delivery&background=000&color=fff"
+                            alt="Delivery">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name" data-user-name>Delivery</span>
+                        <span class="user-role">Entregador</span>
+                    </div>
+                </div>
+            </div>
         </aside>
 
+        <!-- Main Content -->
         <main class="main-content">
+            <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
-                    <h2 class="text-xl font-bold">Entregas em Andamento</h2>
-                </div>
-                <div class="topbar-right">
-                    <button type="button" class="btn btn-ghost btn-icon theme-toggle" data-theme-toggle>
-                        <span class="theme-icon">🌙</span>
+                    <button type="button" class="sidebar-toggle" aria-label="Toggle menu">
+                        <i data-lucide="menu"></i>
                     </button>
-                    <div class="avatar">D</div>
+                    <div class="search-container">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Search orders...">
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <button type="button" class="icon-btn relative" aria-label="View notifications">
+                        <i data-lucide="bell"></i>
+                        <span class="notification-dot"></span>
+                    </button>
+                    
+                    <button type="button" class="icon-btn" aria-label="Toggle theme">
+                        <i data-lucide="moon"></i>
+                    </button>
+
+                    <div class="user-dropdown">
+                        <button type="button" class="user-menu-trigger" aria-label="User menu">
+                            <div class="user-avatar">
+                                <img src="https://ui-avatars.com/api/?name=Delivery&background=000&color=fff"
+                                    alt="User">
+                            </div>
+                            <i data-lucide="chevron-down" class="dropdown-icon"></i>
+                        </button>
+                    </div>
                 </div>
             </header>
 
@@ -75,8 +134,26 @@
     </div>
 
     <script type="module">
-        import { initAuth } from '../assets/js/core/auth.js';
-        initAuth();
+        import { initAuth, requireRole } from '../assets/js/core/auth.js';
+        import { initSidebar } from '../assets/js/components/sidebar.js';
+        import { initTopbar } from '../assets/js/components/topbar.js';
+        import { renderActiveOrders } from '../assets/js/modules/delivery.js';
+        import { ROLES } from '../assets/js/core/supabase.js';
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        async function init() {
+            await initAuth();
+            if (!await requireRole(ROLES.DELIVERY)) return;
+
+            initSidebar();
+            initTopbar();
+
+            await renderActiveOrders();
+        }
+
+        init();
     </script>
 </body>
 
