@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appwrite Connection Verification - HustlerShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #ddd;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .status-item.success {
+            border-left-color: #10b981;
+            background: #ecfdf5;
+        }
+        
+        .status-item.error {
+            border-left-color: #ef4444;
+            background: #fef2f2;
+        }
+        
+        .status-item.warning {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+        
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 20px;
+        }
+        
+        .status-item.success .status-icon {
+            background: #10b981;
+            color: white;
+        }
+        
+        .status-item.error .status-icon {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .status-item.warning .status-icon {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .status-content h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        
+        .status-content p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            transition: transform 0.2s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .test-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .console-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .console-line {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        
+        .console-line.success {
+            color: #10b981;
+        }
+        
+        .console-line.error {
+            color: #ef4444;
+        }
+        
+        .console-line.info {
+            color: #3b82f6;
+        }
+        
+        .project-info {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .project-info h3 {
+            color: #0369a1;
+            margin-bottom: 15px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .info-item strong {
+            color: #374151;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .info-item span {
+            color: #6b7280;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Appwrite Connection Test</h1>
+            <p>HustlerShop MZ - Verification Dashboard</p>
+        </div>
+        
+        <div class="content">
+            <div class="project-info">
+                <h3>📋 Project Configuration</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Project ID:</strong>
+                        <span>696e35180026caf34a47</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Endpoint:</strong>
+                        <span>https://fra.cloud.appwrite.io/v1</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Database ID:</strong>
+                        <span>hustlershop-db</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Region:</strong>
+                        <span>Frankfurt (fra)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <h2>Testing Appwrite Connection...</h2>
+                <p>Please wait while we verify your setup</p>
+            </div>
+            
+            <div id="results" style="display: none;">
+                <h2 style="margin-bottom: 20px;">🔍 Connection Test Results</h2>
+                <div id="statusList"></div>
+                
+                <button class="test-button" onclick="runFullTest()">
+                    🔄 Run Full Test Again
+                </button>
+                
+                <div class="console-output" id="console">
+                    <div class="console-line info">🚀 Starting Appwrite connection test...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { client, account, databases } from './lib/appwrite.js';
+        import { appwriteHelpers, initializeDatabase } from '../assets/js/core/appwrite.js';
+
+        let testResults = [];
+        let consoleOutput = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logLine = `[${timestamp}] ${message}`;
+            consoleOutput.push({ message: logLine, type });
+            updateConsole();
+        }
+
+        function updateConsole() {
+            const consoleDiv = document.getElementById('console');
+            consoleDiv.innerHTML = consoleOutput.map(log => 
+                `<div class="console-line ${log.type}">${log.message}</div>`
+            ).join('');
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+
+        function addStatus(title, description, status, details = '') {
+            testResults.push({ title, description, status, details });
+        }
+
+        function renderResults() {
+            const statusList = document.getElementById('statusList');
+            statusList.innerHTML = testResults.map(result => `
+                <div class="status-item ${result.status}">
+                    <div class="status-icon">
+                        ${result.status === 'success' ? '✓' : result.status === 'error' ? '✗' : '!'}
+                    </div>
+                    <div class="status-content">
+                        <h3>${result.title}</h3>
+                        <p>${result.description}</p>
+                        ${result.details ? `<p><small>${result.details}</small></p>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function testConnection() {
+            log('🔗 Testing basic connection to Appwrite...', 'info');
+            
+            try {
+                const response = await client.ping();
+                log('✅ Basic connection successful!', 'success');
+                addStatus(
+                    'Basic Connection',
+                    'Successfully connected to Appwrite servers',
+                    'success',
+                    `Response time: ${response ? 'Fast' : 'Unknown'}`
+                );
+                return true;
+            } catch (error) {
+                log(`❌ Connection failed: ${error.message}`, 'error');
+                addStatus(
+                    'Basic Connection',
+                    'Failed to connect to Appwrite servers',
+                    'error',
+                    error.message
+                );
+                return false;
+            }
+        }
+
+        async function testAuthentication() {
+            log('🔐 Testing authentication service...', 'info');
+            
+            try {
+                // Test getting current session (may fail if not logged in)
+                const session = await account.get();
+                log('✅ Authentication service working!', 'success');
+                addStatus(
+                    'Authentication Service',
+                    'Auth service is operational',
+                    'success',
+                    session ? `User logged in: ${session.email}` : 'No active session'
+                );
+                return true;
+            } catch (error) {
+                // This is expected if no user is logged in
+                if (error.code === 401) {
+                    log('✅ Authentication service working (no active session)', 'success');
+                    addStatus(
+                        'Authentication Service',
+                        'Auth service is operational (no active session)',
+                        'success',
+                        'This is normal for first-time setup'
+                    );
+                    return true;
+                } else {
+                    log(`❌ Authentication error: ${error.message}`, 'error');
+                    addStatus(
+                        'Authentication Service',
+                        'Authentication service error',
+                        'error',
+                        error.message
+                    );
+                    return false;
+                }
+            }
+        }
+
+        async function testDatabase() {
+            log('💾 Testing database connection...', 'info');
+            
+            try {
+                // Test database initialization
+                const initResult = await initializeDatabase();
+                if (initResult.success) {
+                    log('✅ Database initialization successful!', 'success');
+                    addStatus(
+                        'Database Connection',
+                        'Database is accessible and collections created',
+                        'success',
+                        'All collections initialized successfully'
+                    );
+                    return true;
+                } else {
+                    throw new Error(initResult.error);
+                }
+            } catch (error) {
+                log(`❌ Database error: ${error.message}`, 'error');
+                addStatus(
+                    'Database Connection',
+                    'Database connection failed',
+                    'error',
+                    error.message
+                );
+                return false;
+            }
+        }
+
+        async function testCollections() {
+            log('📁 Testing collections access...', 'info');
+            
+            const collections = ['profiles', 'products', 'orders', 'cart', 'wishlist'];
+            let successCount = 0;
+            
+            for (const collectionName of collections) {
+                try {
+                    const result = await appwriteHelpers.listDocuments(collectionName);
+                    log(`✅ Collection '${collectionName}' accessible`, 'success');
+                    successCount++;
+                } catch (error) {
+                    log(`⚠️ Collection '${collectionName}' error: ${error.message}`, 'error');
+                }
+            }
+            
+            if (successCount === collections.length) {
+                addStatus(
+                    'Collections Access',
+                    'All collections are accessible',
+                    'success',
+                    `${successCount}/${collections.length} collections working`
+                );
+                return true;
+            } else {
+                addStatus(
+                    'Collections Access',
+                    'Some collections are not accessible',
+                    'warning',
+                    `${successCount}/${collections.length} collections working`
+                );
+                return false;
+            }
+        }
+
+        async function runFullTest() {
+            // Reset
+            testResults = [];
+            consoleOutput = [{ message: '🚀 Starting Appwrite connection test...', type: 'info' }];
+            updateConsole();
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            // Run tests
+            const connectionOk = await testConnection();
+            const authOk = await testAuthentication();
+            const dbOk = await testDatabase();
+            const collectionsOk = await testCollections();
+            
+            // Calculate overall status
+            const allTestsPassed = connectionOk && authOk && dbOk && collectionsOk;
+            
+            if (allTestsPassed) {
+                log('🎉 All tests passed! Appwrite is fully configured!', 'success');
+            } else {
+                log('⚠️ Some tests failed. Check the results above.', 'warning');
+            }
+            
+            // Show results
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+                renderResults();
+            }, 1000);
+        }
+
+        // Auto-run on page load
+        document.addEventListener('DOMContentLoaded', runFullTest);
+    </script>
+</body>
+</html>

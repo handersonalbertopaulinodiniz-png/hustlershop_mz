@@ -1,5 +1,5 @@
 // Sidebar Component
-import { getCurrentProfile, signOut } from '../core/auth.js';
+import { getCurrentUserProfile as getCurrentProfile, signOut } from '../core/auth-appwrite.js';
 import { router } from '../core/router.js';
 
 class Sidebar {
