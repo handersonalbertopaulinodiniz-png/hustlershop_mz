@@ -1,5 +1,5 @@
 // Products Module
-import { productsAPI } from '../core/api.js';
+import { productsAPI } from '../core/api-appwrite.js';
 import { cart } from './cart.js';
 import { showToast } from '../components/toast.js';
 

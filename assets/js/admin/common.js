@@ -1,6 +1,6 @@
-import { initAuth, requireRole, signOut } from '../core/auth.js';
+import { initAuth, requireRole, signOut } from '../core/auth-appwrite.js';
 import { initTopbar } from '../components/topbar.js';
-import { usersAPI } from '../core/api.js';
+import { usersAPI } from '../core/api-appwrite.js';
 
 export const initAdminPage = async () => {
     // Strict Admin Check

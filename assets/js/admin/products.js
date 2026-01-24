@@ -1,5 +1,5 @@
 import { initAdminPage, formatCurrency } from './common.js';
-import { productsAPI, categoriesAPI } from '../core/api.js';
+import { productsAPI, categoriesAPI } from '../core/api-appwrite.js';
 import { showToast } from '../components/toast.js';
 
 let allProducts = [];

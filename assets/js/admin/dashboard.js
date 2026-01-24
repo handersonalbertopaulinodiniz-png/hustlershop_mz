@@ -1,6 +1,6 @@
 import { initAdminPage, formatCurrency, formatDate } from './common.js';
-import { api, ordersAPI, usersAPI } from '../core/api.js';
-import { TABLES } from '../core/supabase.js';
+import { api, ordersAPI, usersAPI } from '../core/api-appwrite.js';
+import { COLLECTIONS as TABLES } from '../core/appwrite.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     await initAdminPage();

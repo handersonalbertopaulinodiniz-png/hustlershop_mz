@@ -1,6 +1,6 @@
 // Success Page Module
 import { router } from '../core/router.js';
-import { ordersAPI } from '../core/api.js';
+import { ordersAPI } from '../core/api-appwrite.js';
 
 /**
  * Inicializa a página de sucesso, buscando detalhes do pedido

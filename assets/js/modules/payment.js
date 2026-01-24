@@ -1,6 +1,6 @@
 // Payment Module
-import { ordersAPI, cartAPI } from '../core/api.js';
-import { getCurrentProfile } from '../core/auth.js';
+import { ordersAPI, cartAPI } from '../core/api-appwrite.js';
+import { getCurrentUserProfile as getCurrentProfile } from '../core/auth-appwrite.js';
 import { cart } from './cart.js';
 import { showToast } from '../components/toast.js';
 import { router } from '../core/router.js';
@@ -34,7 +34,7 @@ export const processPayment = async (paymentData) => {
 
         // 2. Preparar dados do pedido principal
         const orderData = {
-            user_id: profile.id,
+            user_id: profile.user_id || profile.id,
             total_amount: cart.getTotal(),
             status: 'pending',
             payment_method: paymentData.method,

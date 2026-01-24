@@ -2,6 +2,148 @@
 import { appwriteHelpers, COLLECTIONS, ORDER_STATUS, DELIVERY_STATUS, PAYMENT_STATUS } from './appwrite.js';
 import { getCurrentUser, getCurrentUserProfile } from './auth-appwrite.js';
 
+const buildQueries = (options = {}) => {
+    const queries = [];
+
+    if (options.filters) {
+        Object.entries(options.filters).forEach(([key, value]) => {
+            queries.push(appwriteHelpers.query.equal(key, value));
+        });
+    }
+
+    if (options.orderBy) {
+        const { column, ascending = true } = options.orderBy;
+        queries.push(ascending ? appwriteHelpers.query.orderAsc(column) : appwriteHelpers.query.orderDesc(column));
+    }
+
+    if (options.limit) {
+        queries.push(appwriteHelpers.query.limit(options.limit));
+    }
+
+    if (options.offset) {
+        queries.push(appwriteHelpers.query.offset(options.offset));
+    }
+
+    return queries;
+};
+
+export const api = {
+    getAll: async (collectionId, options = {}) => {
+        try {
+            const queries = buildQueries(options);
+            const result = await appwriteHelpers.listDocuments(collectionId, queries);
+
+            if (result.success) {
+                return { success: true, data: result.data.documents };
+            }
+
+            return result;
+        } catch (error) {
+            console.error(`Error fetching from ${collectionId}:`, error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    count: async (collectionId, filters = {}) => {
+        try {
+            const queries = buildQueries({ filters, limit: 1 });
+            const result = await appwriteHelpers.listDocuments(collectionId, queries);
+
+            if (result.success) {
+                return { success: true, count: result.data.total };
+            }
+
+            return result;
+        } catch (error) {
+            console.error(`Error counting ${collectionId}:`, error);
+            return { success: false, error: error.message };
+        }
+    }
+};
+
+// Deliveries API
+export const deliveriesAPI = {
+    getAll: async (options = {}) => api.getAll(COLLECTIONS.DELIVERIES, options),
+
+    getById: async (deliveryId) => {
+        return await appwriteHelpers.getDocument(COLLECTIONS.DELIVERIES, deliveryId);
+    },
+
+    create: async (deliveryData) => {
+        const data = {
+            ...deliveryData,
+            status: deliveryData.status || DELIVERY_STATUS.ASSIGNED,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+        };
+        return await appwriteHelpers.createDocument(COLLECTIONS.DELIVERIES, data);
+    },
+
+    update: async (deliveryId, data) => {
+        return await appwriteHelpers.updateDocument(COLLECTIONS.DELIVERIES, deliveryId, {
+            ...data,
+            updated_at: new Date().toISOString()
+        });
+    },
+
+    getByDeliveryPerson: async (userId) => {
+        return await api.getAll(COLLECTIONS.DELIVERIES, {
+            filters: { delivery_person_id: userId },
+            orderBy: { column: 'created_at', ascending: false }
+        });
+    },
+
+    getActiveDeliveries: async (userId) => {
+        const queries = [
+            appwriteHelpers.query.equal('delivery_person_id', userId),
+            appwriteHelpers.query.orderDesc('created_at')
+        ];
+        const result = await appwriteHelpers.listDocuments(COLLECTIONS.DELIVERIES, queries);
+        if (!result.success) return result;
+
+        const activeStatuses = [DELIVERY_STATUS.ASSIGNED, DELIVERY_STATUS.PICKED_UP, DELIVERY_STATUS.IN_TRANSIT];
+        return {
+            success: true,
+            data: result.data.documents.filter(delivery => activeStatuses.includes(delivery.status))
+        };
+    }
+};
+
+// Users API
+export const usersAPI = {
+    getAll: async (options = {}) => api.getAll(COLLECTIONS.USERS, options),
+
+    getById: async (userId) => {
+        return await appwriteHelpers.getDocument(COLLECTIONS.USERS, userId);
+    },
+
+    update: async (userId, data) => {
+        return await appwriteHelpers.updateDocument(COLLECTIONS.USERS, userId, {
+            ...data,
+            updated_at: new Date().toISOString()
+        });
+    },
+
+    delete: async (userId) => {
+        return await appwriteHelpers.deleteDocument(COLLECTIONS.USERS, userId);
+    },
+
+    getPendingApprovals: async () => {
+        return await api.getAll(COLLECTIONS.USERS, {
+            filters: { approval_status: 'pending' },
+            orderBy: { column: 'created_at', ascending: false }
+        });
+    },
+
+    approveUser: async (userId) => {
+        return await usersAPI.update(userId, { approval_status: 'approved' });
+    },
+
+    rejectUser: async (userId) => {
+        return await usersAPI.update(userId, { approval_status: 'rejected' });
+    }
+};
+
 // Products API
 export const productsAPI = {
     // Get all products
@@ -93,6 +235,7 @@ export const productsAPI = {
 
 // Orders API
 export const ordersAPI = {
+    getAll: async (options = {}) => api.getAll(COLLECTIONS.ORDERS, options),
     // Get user orders
     getUserOrders: async (userId = null) => {
         try {
@@ -146,6 +289,37 @@ export const ordersAPI = {
             return await appwriteHelpers.createDocument(COLLECTIONS.ORDERS, data);
         } catch (error) {
             console.error('Create order error:', error);
+            return { success: false, error: error.message };
+        }
+    },
+
+    update: async (orderId, data) => {
+        return await appwriteHelpers.updateDocument(COLLECTIONS.ORDERS, orderId, {
+            ...data,
+            updated_at: new Date().toISOString()
+        });
+    },
+
+    delete: async (orderId) => {
+        return await appwriteHelpers.deleteDocument(COLLECTIONS.ORDERS, orderId);
+    },
+
+    addItem: async (itemData) => {
+        return await appwriteHelpers.createDocument(COLLECTIONS.ORDER_ITEMS, {
+            ...itemData,
+            created_at: new Date().toISOString()
+        });
+    },
+
+    addItems: async (items) => {
+        try {
+            const results = await Promise.all(items.map(item => ordersAPI.addItem(item)));
+            const failures = results.filter(result => !result.success);
+            if (failures.length) {
+                return { success: false, error: failures[0].error };
+            }
+            return { success: true, data: results.map(result => result.data) };
+        } catch (error) {
             return { success: false, error: error.message };
         }
     },

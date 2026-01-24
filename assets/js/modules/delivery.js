@@ -1,6 +1,6 @@
 // Delivery Module
-import { deliveriesAPI } from '../core/api.js';
-import { getCurrentProfile } from '../core/auth.js';
+import { deliveriesAPI } from '../core/api-appwrite.js';
+import { getCurrentUserProfile as getCurrentProfile } from '../core/auth-appwrite.js';
 import { showToast } from '../components/toast.js';
 
 export const getActiveDeliveries = async () => {

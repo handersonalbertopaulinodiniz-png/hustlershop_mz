@@ -1,7 +1,7 @@
 // Topbar Component
-import { getCurrentProfile } from '../core/auth.js';
+import { getCurrentUserProfile as getCurrentProfile } from '../core/auth-appwrite.js';
 import { toggleTheme, getTheme } from '../core/theme-engine.js';
-import { notificationsAPI } from '../core/api.js';
+import { notificationsAPI } from '../core/api-appwrite.js';
 
 class Topbar {
     constructor() {

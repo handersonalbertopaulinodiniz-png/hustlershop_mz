@@ -1,5 +1,5 @@
 // Authentication Module using Appwrite
-import { account, appwriteHelpers, COLLECTIONS, ROLES, APPROVAL_STATUS, ID } from './appwrite.js';
+import { account, appwriteHelpers, COLLECTIONS, ROLES, APPROVAL_STATUS, ID, initializeDatabase } from './appwrite.js';
 import { showToast } from '../components/toast.js';
 import { router } from './router.js';
 import { cart } from '../modules/cart.js';
@@ -83,6 +83,7 @@ export const getCurrentProfile = async () => {
 // Initialize authentication state
 export const initAuth = async () => {
     try {
+        await initializeDatabase();
         const session = await getCurrentSession();
         
         if (session.success) {

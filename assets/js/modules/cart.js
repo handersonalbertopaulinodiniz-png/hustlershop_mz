@@ -1,6 +1,6 @@
 // Cart Module
-import { cartAPI } from '../core/api.js';
-import { getCurrentProfile } from '../core/auth.js';
+import { cartAPI } from '../core/api-appwrite.js';
+import { getCurrentUserProfile as getCurrentProfile } from '../core/auth-appwrite.js';
 import { showToast } from '../components/toast.js';
 
 class CartManager {
@@ -21,7 +21,7 @@ class CartManager {
             return { success: true, data: this.items };
         }
 
-        const result = await cartAPI.getByUser(profile.id);
+        const result = await cartAPI.getByUser(profile.user_id || profile.id);
 
         if (result.success) {
             this.items = result.data;
@@ -55,7 +55,7 @@ class CartManager {
             return { success: true };
         }
 
-        const result = await cartAPI.addItem(profile.id, productId, quantity);
+        const result = await cartAPI.addItem(profile.user_id || profile.id, productId, quantity);
 
         if (result.success) {
             await this.loadCart();

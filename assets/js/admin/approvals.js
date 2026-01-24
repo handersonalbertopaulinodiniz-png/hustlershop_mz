@@ -1,5 +1,5 @@
 import { initAdminPage, formatDate } from './common.js';
-import { usersAPI } from '../core/api.js';
+import { usersAPI } from '../core/api-appwrite.js';
 import { showToast } from '../components/toast.js';
 
 document.addEventListener('DOMContentLoaded', async () => {

@@ -39,6 +39,7 @@ export const COLLECTIONS = {
   PRODUCTS: 'products',
   ORDERS: 'orders',
   ORDER_ITEMS: 'order_items',
+  DELIVERIES: 'deliveries',
   CART: 'cart',
   WISHLIST: 'wishlist',
   REVIEWS: 'reviews',
@@ -97,6 +98,16 @@ export const STORAGE_BUCKETS = {
 };
 
 // Helper Functions for Appwrite
+const normalizeDocument = (document) => {
+  if (!document) return document;
+  return {
+    ...document,
+    id: document.$id
+  };
+};
+
+const normalizeDocumentList = (documents = []) => documents.map(normalizeDocument);
+
 export const appwriteHelpers = {
   // Get storage URL
   getStorageUrl: (bucketId, fileId) => {
@@ -129,7 +140,7 @@ export const appwriteHelpers = {
         data,
         permissions
       );
-      return { success: true, data: result };
+      return { success: true, data: normalizeDocument(result) };
     } catch (error) {
       console.error('Create document error:', error);
       return { success: false, error: error.message };
@@ -144,7 +155,7 @@ export const appwriteHelpers = {
         collectionId,
         documentId
       );
-      return { success: true, data: result };
+      return { success: true, data: normalizeDocument(result) };
     } catch (error) {
       console.error('Get document error:', error);
       return { success: false, error: error.message };
@@ -159,7 +170,13 @@ export const appwriteHelpers = {
         collectionId,
         queries
       );
-      return { success: true, data: result };
+      return {
+        success: true,
+        data: {
+          ...result,
+          documents: normalizeDocumentList(result.documents)
+        }
+      };
     } catch (error) {
       console.error('List documents error:', error);
       return { success: false, error: error.message };
@@ -176,7 +193,7 @@ export const appwriteHelpers = {
         data,
         permissions
       );
-      return { success: true, data: result };
+      return { success: true, data: normalizeDocument(result) };
     } catch (error) {
       console.error('Update document error:', error);
       return { success: false, error: error.message };
